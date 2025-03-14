@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 16:03:27 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/14 22:32:47 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/15 00:33:37 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	copy(t_shell *shell, t_token *token)
 	}
 	len = shell->prompt_index - start;
 	token->content[shell->token_index] = ft_substr(shell->prompt, start, len);
-	token->content[shell->token_index][len] = '\0';
+	token->content[shell->token_index][len + 1] = '\0';
 	shell->token_index++;
 	while (shell->prompt[shell->prompt_index] == ' ')
 		shell->prompt_index++;

@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 13:59:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/14 23:38:56 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/15 01:04:08 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ void	check_prompt_2(t_shell *shell, t_token **token)
 		(*token)->content[shell->token_index++] = ft_strdup(">");
 		shell->prompt_index++;
 	}
+	while (shell->prompt[shell->prompt_index] == ' ')
+		shell->prompt_index++;
 }
 
 void	check_prompt_3(t_shell *shell, t_token **token)
