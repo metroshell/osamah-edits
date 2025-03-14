@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/15 01:24:31 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/15 01:28:48 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ void	count_qoutes(t_shell *shell)
 	{
 		if (shell->prompt[shell->temp_index] == detect)
 			shell->qoute_flag = 1;
-		if (shell->qoute_flag == 1 && //(shell->prompt[shell->temp_index] == ' '
-				( shell->prompt[shell->temp_index] == '|'
+		if (shell->qoute_flag == 1 && (shell->prompt[shell->temp_index] == '|'
 				|| shell->prompt[shell->temp_index] == '>'
 				|| shell->prompt[shell->temp_index] == '<'))
 			break ;
