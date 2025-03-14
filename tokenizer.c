@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 13:59:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/14 22:30:15 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/14 23:38:56 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	check_prompt_3(t_shell *shell, t_token **token)
 		*token = (*token)->next;
 		shell->token_index = 0;
 	}
-	else if (ft_isalpha(shell->prompt[shell->prompt_index])
+	else if (ft_isascii(shell->prompt[shell->prompt_index])
 		|| (shell->prompt[shell->prompt_index] == '-'
 			&& ft_isalpha(shell->prompt[shell->prompt_index + 1])))
 		copy(shell, *token);
