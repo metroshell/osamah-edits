@@ -6,35 +6,25 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 13:59:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/16 05:47:07 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/16 20:15:39 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	check_quotes(t_shell *shell)
-// {
-// 	int	i;
-// 	int	dub;
-// 	int	single;
-
-// 	i = 0;
-// 	dub = 0;
-// 	single = 0;
-// 	while (shell->prompt[i])
-// 	{
-// 		if (shell->prompt[i] == '\"')
-// 			dub++;
-// 		else if (shell->prompt[i] == '\'')
-// 			single++;
-// 		i++;
-// 	}
-// 	if (dub % 2 != 0 || single % 2 != 0)
-// 	{
-// 		printf("arssh: unclosed qoutes\n");
-// 		shell->token_flag = 1;
-// 	}
-// }
+int	check_quotes_norm(t_shell *shell, int *quote, int i, char c)
+{
+	(*quote) = 1;
+	i++;
+	while (shell->prompt[i] != c && shell->prompt[i])
+		i++;
+	if (shell->prompt[i] == c && shell->prompt[i])
+	{
+		(*quote) = 2;
+		i++;
+	}
+	return (i);
+}
 
 void	check_quotes(t_shell *shell)
 {
@@ -46,29 +36,9 @@ void	check_quotes(t_shell *shell)
 	while (shell->prompt[i])
 	{
 		if (shell->prompt[i] == '\"' && shell->prompt[i])
-		{
-			quote = 1;
-			i++;
-			while (shell->prompt[i] != '\"' && shell->prompt[i])
-				i++;
-			if (shell->prompt[i] == '\"' && shell->prompt[i])
-			{
-				quote = 2;
-				i++;
-			}
-		}
+			i += check_quotes_norm(shell, &quote, i, '\"');
 		else if (shell->prompt[i] == '\'' && shell->prompt[i])
-		{
-			quote = 1;
-			i++;
-			while (shell->prompt[i] != '\'' && shell->prompt[i])
-				i++;
-			if (shell->prompt[i] == '\'' && shell->prompt[i])
-			{
-				quote = 2;
-				i++;
-			}
-		}
+			i += check_quotes_norm(shell, &quote, i, '\'');
 		else
 			i++;
 	}
@@ -111,7 +81,7 @@ void	check_prompt_4(t_shell *shell)
 	}
 	else if (ft_strncmp(&shell->prompt[shell->prompt_index], "||", 2) == 0)//error number 130
 	{
-		printf("arssh: syntax error near unexpected token `||'\n");
+		printf("arssh: this shell doesn't support the or operator `||'\n");
 		shell->token_flag = 1;
 		shell->prompt_index += 2;
 	}
