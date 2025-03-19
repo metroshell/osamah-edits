@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:04:10 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/19 17:12:11 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:13:09 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ void    detect_heredoc(t_parser *parser,t_token *temp)
         temp->type[parser->index] = HEREDOC;
         parser->heredocs_counter++;
         parser->filename_flag = 1;
-        parser->texts_flag = 1;
+        parser->index++;
     }
     else if(ft_strncmp(temp->content[parser->index], ">>", 2) == 0)
     {
         temp->type[parser->index] = APPEND;
         parser->append_counter++;
         parser->filename_flag = 1;
-        parser->texts_flag = 1;
+        parser->index++;
     }     
 }
 
@@ -71,6 +71,7 @@ void    detect_redirect(t_parser *parser,t_token *temp)
         parser->redirect_counter++;
         parser->filename_flag = 1;
         parser->texts_flag = 1;
+        parser->index++;
     }
 }
 
@@ -78,9 +79,6 @@ void    detect_filename(t_parser *parser, t_token *temp)
 {
     temp->type[parser->index] = FILENAME;
     parser->filename_counter++;
-    parser->filename_flag = 0;
-    parser->texts_flag = 1;
-
 }
 
 void    detect_texts(t_parser *parser, t_token *temp)
@@ -102,14 +100,14 @@ void    ft_parser(t_token *head,t_shell *shell)
     {
         while(temp->content[parser->index])
         {
+            parser->filename_flag = 0;
+            parser->texts_flag = 0;
             detect_command(parser,temp,shell->paths);
             detect_arguments(parser,temp);
             detect_heredoc(parser,temp);
             detect_redirect(parser,temp);
             if(parser->filename_flag)
                 detect_filename(parser,temp);
-            else if(temp->content[parser->index][0] == '|')
-                parser->index++;
             else if(!parser->texts_flag)
                 detect_texts(parser,temp);
             parser->index++;

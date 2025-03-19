@@ -33,6 +33,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	rm -rf $(OBJS_DIR)
 	$(MAKE) fclean -C $(LIBFT_DIR)
 re: fclean all
 
