@@ -6,9 +6,12 @@ LIBFT_DIR = libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = main.c tokenizer.c token_utils.c token_size.c
+SRCS = main.c \
+	./tokenizer/tokenizer.c ./tokenizer/token_utils.c ./tokenizer/token_size.c \
+	./parser/parser_utils.c ./parser/parser.c 
 
-OBJS = $(SRCS:.c=.o)
+OBJS_DIR := objects
+OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
 
 NAME = minishell
 
@@ -19,6 +22,10 @@ $(NAME) : $(OBJS) $(LIBFT)
 
 $(LIBFT):
 	$(MAKE) bonus -C $(LIBFT_DIR)
+
+$(OBJS_DIR)/%.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)

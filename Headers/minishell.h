@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/15 19:42:18 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/19 17:09:49 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,12 @@
 
 typedef struct s_parser
 {
-	char	**commands;
+	int		append_counter;
 	int		commands_counter;
-	char	**heredocs;
 	int		heredocs_counter;
-	char	**redirect;
 	int		redirect_counter;
-	char	**filename;
 	int		filename_counter;
-	char	**arguments;
 	int		arguments_counter;
-	char	**texts;
 	int		texts_counter;
 	int		index;
 	int		filename_flag;
@@ -55,8 +50,19 @@ typedef struct s_shell
 	int		temp_index;
 }			t_shell;
 
+typedef enum s_type{
+	COMMAND = 0,
+	ARGUMENT = 1,
+	HEREDOC = 2,
+	APPEND = 3,
+	TEXT = 4,
+	REDIRECT = 5,
+	FILENAME = 6,
+} t_type;
+
 typedef struct s_token
 {
+	t_type	*type;
 	char			**content;
 	struct s_token	*next;
 }		t_token;
@@ -80,32 +86,29 @@ typedef struct s_echo
 	char	*output;
 }			t_echo;
 
-// void		add_command(char *cmd, t_shell *shell);
-// void		add_heredoc(char *heredoc, t_shell *shell);
-// void		detect_heredocs(t_shell *shell);
-// void		detect_commands(t_shell *shell);
 // toknizer
 t_token	*tokenizer(t_shell *shell);
 t_token	*create_new_node(t_shell *shell);
 void	copy(t_shell *shell, t_token *token);
 void	copy_quotes(t_shell *shell, t_token *token, char detect);
 void	tokenizer_size(t_shell *shell);
-// parser
 
-t_parser	*ft_parser(t_token *head, t_shell *shell);
+// parser
+void    ft_parser(t_token *head,t_shell *shell);
 void	add_backslash(t_shell *shell);
 void	get_paths(t_shell *shell);
-void	initialize_parser(t_parser *parser);
-void	fill_parser(t_parser *parser);
+
 // export command
 void	export_var(t_shell *shell, t_export *export);
 void	scan_env(t_shell *shell, t_export *export);
 void	add_to_env(t_shell *shell, t_export *export);
 void	replace_env(t_shell *shell, t_export *export);
 void	export_command(t_shell *shell);
+
 // env command
 void	env_copy(t_shell *shell, char **env);
 void	env_command(t_shell *shell);
+
 // echo command
 void	set_flags(t_echo *all, t_shell *shell);
 void	copy_var(t_shell *shell, t_echo *all);

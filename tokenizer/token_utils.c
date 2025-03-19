@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 16:03:27 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/15 16:52:21 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/19 17:11:12 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ t_token	*create_new_node(t_shell *shell)
 	shell->counter = 0;
 	shell->temp_index = shell->prompt_index;
 	tokenizer_size(shell);
+	new_node->type = ft_calloc(shell->counter + 1, sizeof(t_type));
+	if (!new_node->type)
+		exit(EXIT_FAILURE);
 	new_node->content = ft_calloc(shell->counter + 1, sizeof(char *));
 	if (!new_node->content)
 		exit(EXIT_FAILURE);
