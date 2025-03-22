@@ -6,113 +6,92 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:04:10 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/19 22:13:09 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/22 23:24:24 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    detect_command(t_parser *parser,t_token *temp,char **paths)
+// add backslash to the path
+void	add_backslash(t_shell *shell)
 {
-    char *command_path = NULL;
-    int i = 0;
-    while(paths[i])
-    {
-        command_path = ft_strjoin(paths[i],temp->content[parser->index]);
-        if(!command_path)
-            exit(EXIT_FAILURE);
-        if(!access(command_path , X_OK))
-        {
-            temp->type[parser->index] = COMMAND;
-            parser->commands_counter++;
-            parser->texts_flag = 1;
-            break;
-        }
-        i++;
-    }
-    if (command_path)
-        free(command_path);
+	int		i;
+	int		j;
+	char	*temp;
+	int		l;
+
+	i = 0;
+	j = 0;
+	temp = NULL;
+	while (shell->paths[i])
+	{
+		l = ft_strlen(shell->paths[i]);
+		temp = malloc(l + 2);
+		while (shell->paths[i][j])
+		{
+			temp[j] = shell->paths[i][j];
+			j++;
+		}
+		temp[j] = '/';
+		temp[j + 1] = '\0';
+		free(shell->paths[i]);
+		shell->paths[i] = temp;
+		j = 0;
+		i++;
+	}
 }
 
-void    detect_arguments(t_parser *parser,t_token *temp)
+// take a copy of paths to detect commands
+void	get_paths(t_shell *shell)
 {
-    if(temp->content[parser->index][0] == '-' && ft_isalpha(temp->content[parser->index][1]))
-    {
-        temp->type[parser->index] = ARGUMENT;
-        parser->arguments_counter++;
-        parser->texts_flag = 1;
-    }
+	int	i;
+
+	i = 0;
+	while (shell->environment[i])
+	{
+		if (ft_strncmp(shell->environment[i], "PATH=", 5) == 0)
+		{
+			shell->paths = ft_split(shell->environment[i] + 5, ':');
+			if (!shell->paths)
+				exit(EXIT_FAILURE);
+			add_backslash(shell);
+		}
+		i++;
+	}
 }
 
-void    detect_heredoc(t_parser *parser,t_token *temp)
+void	detect_texts(t_parser *parser, t_token *temp)
 {
-    if(ft_strncmp(temp->content[parser->index], "<<", 2) == 0)
-    {
-        temp->type[parser->index] = HEREDOC;
-        parser->heredocs_counter++;
-        parser->filename_flag = 1;
-        parser->index++;
-    }
-    else if(ft_strncmp(temp->content[parser->index], ">>", 2) == 0)
-    {
-        temp->type[parser->index] = APPEND;
-        parser->append_counter++;
-        parser->filename_flag = 1;
-        parser->index++;
-    }     
+	temp->type[parser->index] = TEXT;
+	parser->texts_counter++;
+	parser->texts_flag = 0;
 }
 
-void    detect_redirect(t_parser *parser,t_token *temp)
+void	ft_parser(t_token *head, t_shell *shell)
 {
-    if(*temp->content[parser->index] == '>' ||
-        *temp->content[parser->index]== '<')
-    {
-        temp->type[parser->index] = REDIRECT;
-        parser->redirect_counter++;
-        parser->filename_flag = 1;
-        parser->texts_flag = 1;
-        parser->index++;
-    }
-}
+	t_parser	*parser;
 
-void    detect_filename(t_parser *parser, t_token *temp)
-{
-    temp->type[parser->index] = FILENAME;
-    parser->filename_counter++;
-}
-
-void    detect_texts(t_parser *parser, t_token *temp)
-{
-    temp->type[parser->index] = TEXT;    
-    parser->texts_counter++;
-    parser->texts_flag = 0;
-}  
-
-void    ft_parser(t_token *head,t_shell *shell)
-{
-    get_paths(shell);
-    t_token *temp = head;
-    t_parser *parser;
-    parser = ft_calloc(1,sizeof(t_parser));
-    if(!parser)
-        exit(EXIT_FAILURE);
-    while (temp)
-    {
-        while(temp->content[parser->index])
-        {
-            parser->filename_flag = 0;
-            parser->texts_flag = 0;
-            detect_command(parser,temp,shell->paths);
-            detect_arguments(parser,temp);
-            detect_heredoc(parser,temp);
-            detect_redirect(parser,temp);
-            if(parser->filename_flag)
-                detect_filename(parser,temp);
-            else if(!parser->texts_flag)
-                detect_texts(parser,temp);
-            parser->index++;
-        }
-        parser->index = 0;
-        temp = temp->next;
-    }
+	parser = ft_calloc(1, sizeof(t_parser));
+	if (!parser)
+		exit(EXIT_FAILURE);
+	get_paths(shell);
+	while (head)
+	{
+		while (head->content[parser->index])
+		{
+			parser->filename_flag = 0;
+			parser->texts_flag = 0;
+			detect_command(parser, head, shell->paths);
+			detect_arguments(parser, head);
+			detect_heredoc(parser, head);
+			detect_redirect(parser, head);
+			if (parser->filename_flag)
+				detect_filename(parser, head);
+			else if (!parser->texts_flag)
+				detect_texts(parser, head);
+			parser->index++;
+		}
+		parser->index = 0;
+		head = head->next;
+	}
 }
