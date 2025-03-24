@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 13:59:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/22 23:12:12 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/24 20:00:12 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ void	check_quotes(t_shell *shell)
 	while (shell->prompt[i])
 	{
 		if (shell->prompt[i] == '\"' && shell->prompt[i])
-			i += check_quotes_norm(shell, &quote, i, '\"');
+			i = check_quotes_norm(shell, &quote, i, '\"');
 		else if (shell->prompt[i] == '\'' && shell->prompt[i])
-			i += check_quotes_norm(shell, &quote, i, '\'');
+			i = check_quotes_norm(shell, &quote, i, '\'');
 		else
 			i++;
 	}

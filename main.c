@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/19 17:12:41 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/25 01:39:48 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,54 +35,55 @@ void	env_copy(t_shell *shell, char **env)
 	shell->environment[i] = NULL;
 }
 
-void print_type(t_type type)
-{    
-	switch (type) {
-        case COMMAND:
-            printf("COMMAND\n");
-            break;
-        case ARGUMENT:
-            printf("ARGUMENT\n");
-            break;
-        case HEREDOC:
-            printf("HEREDOC\n");
-            break;
-        case APPEND:
-            printf("APPEND\n");
-            break;
-        case TEXT:
-            printf("TEXT\n");
-            break;
-        case REDIRECT:
-            printf("REDIRECT\n");
-            break;
-        case FILENAME:
-            printf("FILENAME\n");
-            break;
-    }
+void	print_type(t_type type)
+{
+	switch(type)
+	{
+		case COMMAND:
+			printf("COMMAND\n");
+			break ;
+		case ARGUMENT:
+			printf("ARGUMENT\n");
+			break ;
+		case HEREDOC:
+			printf("HEREDOC\n");
+			break ;
+		case APPEND:
+			printf("APPEND\n");
+			break ;
+		case TEXT:
+			printf("TEXT\n");
+			break ;
+		case REDIRECT:
+			printf("REDIRECT\n");
+			break ;
+		case FILENAME:
+			printf("FILENAME\n");
+			break ;
+	}
 }
 
 // test the tokenizer
-void print_tokens(t_token *arg)
+void	print_tokens(t_token *arg)
 {
-    t_token *tmp;
-    int i;
-    tmp = arg;
-    while (tmp)
-    {
-        i = 0;
-        while (tmp->content[i])
-        {
-            printf("argv[%i] = %s , type = ", i, tmp->content[i]);
-            print_type(tmp->type[i]);
-            i++;
-        }
-        tmp = tmp->next;
-        if (tmp)
-            printf("------->%c\n", '|');
-    }
-}
+	t_token	*tmp;
+	int		i;
 
+	tmp = arg;
+	while (tmp)
+	{
+		i = 0;
+		while (tmp->content[i])
+		{
+			printf("argv[%i] = %s , type = ", i, tmp->content[i]);
+			print_type(tmp->type[i]);
+			i++;
+		}
+		tmp = tmp->next;
+		if (tmp)
+			printf("------->%c\n", '|');
+	}
+}
 
 // take the arguments and the enviroment
 int	main(int argc, char **argv, char **env)
@@ -107,12 +108,14 @@ int	main(int argc, char **argv, char **env)
 		{
 			add_history(shell->prompt);
 			tokens = tokenizer(shell);
-			ft_parser(tokens,shell);
+			ft_parser(tokens, shell);
 			print_tokens(tokens);
 		}
 		else
 			exit(EXIT_FAILURE);
 	}
+	free (shell);
+	rl_clear_history();
 	free(shell->prompt);
 	return (0);
 }
