@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_size.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/25 01:00:27 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/26 16:04:02 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,14 @@ void	count_qoutes(t_shell *shell)
 
 	detect = shell->prompt[shell->temp_index];
 	shell->temp_index++;
-	while (shell->prompt[shell->temp_index] != detect)
+	while (shell->prompt[shell->temp_index])
 	{
 		if (shell->prompt[shell->temp_index] == detect)
 			shell->qoute_flag = 1;
-		if (shell->qoute_flag == 1)
+		if (shell->qoute_flag == 1 && (shell->prompt[shell->temp_index] == ' '
+				|| shell->prompt[shell->temp_index] == '|'
+				|| shell->prompt[shell->temp_index] == '>'
+				|| shell->prompt[shell->temp_index] == '<'))
 			break ;
 		shell->temp_index++;
 	}

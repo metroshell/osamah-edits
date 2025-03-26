@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/22 23:19:34 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/26 18:03:15 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,20 @@ typedef struct s_export
 	int				find;
 }					t_export;
 
+typedef struct s_expand
+{
+	int outer_index;
+	int inner_index;
+	int quotes_count;
+	int quote_flag;
+	char quote;
+	char			*output;
+	char			*variable;
+	int		var_length;
+	int		single_qoute;
+
+} t_expand;
+
 typedef struct s_echo
 {
 	int				single_qoute;
@@ -111,6 +125,10 @@ void				detect_command(t_parser *parser, t_token *temp,
 						char **paths);
 void				detect_redirect(t_parser *parser, t_token *temp);
 void				detect_filename(t_parser *parser, t_token *temp);
+
+// expander
+void    ft_expander(t_shell *shell, t_token *token);
+
 
 // export command
 void				export_var(t_shell *shell, t_export *export);

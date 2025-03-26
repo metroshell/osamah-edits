@@ -6,9 +6,10 @@ LIBFT_DIR = libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = main.c \
+SRCS = main.c env.c\
 	./tokenizer/tokenizer.c ./tokenizer/token_utils.c ./tokenizer/token_size.c ./tokenizer/prompt_check.c \
-	./parser/detect_type.c ./parser/parser.c 
+	./parser/detect_type.c ./parser/parser.c \
+	./expander/expander.c 
 
 OBJS_DIR := objects
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

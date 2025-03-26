@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/25 01:39:48 by qais             ###   ########.fr       */
+/*   Updated: 2025/03/26 17:03:22 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ int	main(int argc, char **argv, char **env)
 			add_history(shell->prompt);
 			tokens = tokenizer(shell);
 			ft_parser(tokens, shell);
+			ft_expander(shell,tokens);
 			print_tokens(tokens);
 		}
 		else
