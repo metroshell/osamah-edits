@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/26 16:04:02 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/27 16:13:13 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	count_qoutes(t_shell *shell)
 
 	detect = shell->prompt[shell->temp_index];
 	shell->temp_index++;
+	while(shell->prompt[shell->temp_index] != detect)
+				shell->temp_index++;
 	while (shell->prompt[shell->temp_index])
 	{
 		if (shell->prompt[shell->temp_index] == detect)
@@ -38,10 +40,20 @@ void	count_without_qoutes(t_shell *shell)
 		&& shell->prompt[shell->temp_index] != '>'
 		&& shell->prompt[shell->temp_index] != '|'
 		&& shell->prompt[shell->temp_index] != ' '
-		&& shell->prompt[shell->temp_index]
-		&& shell->prompt[shell->temp_index] != '\''
-		&& shell->prompt[shell->temp_index] != '\"')
+		&& shell->prompt[shell->temp_index])
 	{
+		if(shell->prompt[shell->temp_index] == '\'')
+		{
+			shell->temp_index++;
+			while(shell->prompt[shell->temp_index] != '\'')
+				shell->temp_index++;
+		}
+		else if(shell->prompt[shell->temp_index] == '\"')
+		{
+			shell->temp_index++;
+			while(shell->prompt[shell->temp_index] != '\"')
+				shell->temp_index++;
+		}
 		shell->temp_index++;
 	}
 }

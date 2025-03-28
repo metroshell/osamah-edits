@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/26 18:03:15 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/28 21:39:02 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,8 @@ typedef struct s_parser
 	int				redirect_counter;
 	int				filename_counter;
 	int				arguments_counter;
-	int				texts_counter;
 	int				index;
 	int				filename_flag;
-	int				texts_flag;
 }					t_parser;
 
 typedef struct s_shell
@@ -52,13 +50,13 @@ typedef struct s_shell
 
 typedef enum s_type
 {
-	COMMAND = 0,
-	ARGUMENT = 1,
-	HEREDOC = 2,
-	APPEND = 3,
-	TEXT = 4,
-	REDIRECT = 5,
-	FILENAME = 6,
+	TEXT ,
+	COMMAND ,
+	ARGUMENT ,
+	HEREDOC ,
+	APPEND ,
+	REDIRECT ,
+	FILENAME
 }					t_type;
 
 typedef struct s_token
@@ -86,7 +84,6 @@ typedef struct s_expand
 	char			*variable;
 	int		var_length;
 	int		single_qoute;
-
 } t_expand;
 
 typedef struct s_echo
@@ -118,7 +115,7 @@ void				check_prompt_4(t_shell *shell);
 void				check_errors(t_shell *shell);
 
 // parser
-void				ft_parser(t_token *head, t_shell *shell);
+void				ft_parser(t_token *head,t_parser *parser, t_shell *shell);
 void				detect_heredoc(t_parser *parser, t_token *temp);
 void				detect_arguments(t_parser *parser, t_token *temp);
 void				detect_command(t_parser *parser, t_token *temp,
@@ -128,7 +125,12 @@ void				detect_filename(t_parser *parser, t_token *temp);
 
 // expander
 void    ft_expander(t_shell *shell, t_token *token);
-
+void    count_quotes(t_token *token,t_expand *expand);
+void    expand_dollar(t_shell *shell,t_token *token, t_expand *expand);
+void    check_env(t_shell *shell, t_expand *expand);
+void    copy_var(t_token *token, t_expand *expand);
+void    get_length(t_token *token, t_expand *expand);
+void    ft_outjoin(t_token *token,t_expand *expand);
 
 // export command
 void				export_var(t_shell *shell, t_export *export);
@@ -143,8 +145,8 @@ void				env_command(t_shell *shell);
 
 // echo command
 void				set_flags(t_echo *all, t_shell *shell);
-void				copy_var(t_shell *shell, t_echo *all);
-void				check_env(t_shell *shell, t_echo *all);
+// void				copy_var(t_shell *shell, t_echo *all);
+// void				check_env(t_shell *shell, t_echo *all);
 void				dollar_sign(t_shell *shell, t_echo *all);
 void				echo_command(t_shell *shell);
 

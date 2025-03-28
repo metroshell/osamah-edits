@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_utils.c                                     :+:      :+:    :+:   */
+/*   detect_type.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:16:39 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/22 23:19:16 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/28 21:38:18 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	detect_command(t_parser *parser, t_token *temp, char **paths)
 		{
 			temp->type[parser->index] = COMMAND;
 			parser->commands_counter++;
-			parser->texts_flag = 1;
 			break ;
 		}
 		i++;
@@ -44,7 +43,6 @@ void	detect_arguments(t_parser *parser, t_token *temp)
 	{
 		temp->type[parser->index] = ARGUMENT;
 		parser->arguments_counter++;
-		parser->texts_flag = 1;
 	}
 }
 
@@ -55,14 +53,12 @@ void	detect_heredoc(t_parser *parser, t_token *temp)
 		temp->type[parser->index] = HEREDOC;
 		parser->heredocs_counter++;
 		parser->filename_flag = 1;
-		parser->index++;
 	}
 	else if (ft_strncmp(temp->content[parser->index], ">>", 2) == 0)
 	{
 		temp->type[parser->index] = APPEND;
 		parser->append_counter++;
 		parser->filename_flag = 1;
-		parser->index++;
 	}
 }
 
@@ -74,8 +70,6 @@ void	detect_redirect(t_parser *parser, t_token *temp)
 		temp->type[parser->index] = REDIRECT;
 		parser->redirect_counter++;
 		parser->filename_flag = 1;
-		parser->texts_flag = 1;
-		parser->index++;
 	}
 }
 
