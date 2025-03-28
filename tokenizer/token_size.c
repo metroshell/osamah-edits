@@ -31,7 +31,6 @@ void	count_qoutes(t_shell *shell)
 			break ;
 		shell->temp_index++;
 	}
-	shell->temp_index++;
 }
 
 void	count_without_qoutes(t_shell *shell)
