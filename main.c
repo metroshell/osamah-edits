@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 21:43:08 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/28 22:32:50 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,24 @@ void	print_tokens(t_token *arg)
 	}
 }
 
+// print env
+#include "minishell.h"
+
+void print_env(t_env *env)
+{
+    t_env *current;
+
+    current = env;
+    while (current)
+    {
+        if (current->variable && current->content)
+            printf("%s=%s\n", current->variable, current->content);
+        else if (current->variable)
+            printf("%s=\n", current->variable);
+        current = current->next;
+    }
+}
+
 // take the arguments and the enviroment
 int	main(int argc, char **argv, char **env)
 {
@@ -83,7 +101,9 @@ int	main(int argc, char **argv, char **env)
 	parser = ft_calloc(1, sizeof(t_parser));
 	if (!parser)
 		exit(EXIT_FAILURE);
+	
 	env_copy(shell, env);
+	// print_env(shell->env);
 	while (1)
 	{
 		shell->prompt = readline("Arab Spring 🐣🐥 -> ");

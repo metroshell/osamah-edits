@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:04:10 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 21:38:28 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/28 22:30:23 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,20 +44,21 @@ void	add_backslash(t_shell *shell)
 // take a copy of paths to detect commands
 void	get_paths(t_shell *shell)
 {
-	int	i;
+    t_env	*current;
 
-	i = 0;
-	while (shell->environment[i])
-	{
-		if (ft_strncmp(shell->environment[i], "PATH=", 5) == 0)
-		{
-			shell->paths = ft_split(shell->environment[i] + 5, ':');
-			if (!shell->paths)
-				exit(EXIT_FAILURE);
-			add_backslash(shell);
-		}
-		i++;
-	}
+    current = shell->env; // Start from the head of the linked list
+    while (current)
+    {
+        if (ft_strncmp(current->variable, "PATH", 4) == 0 && current->content)
+        {
+            shell->paths = ft_split(current->content, ':');
+            if (!shell->paths)
+                exit(EXIT_FAILURE);
+            add_backslash(shell);
+            break;
+        }
+        current = current->next;
+    }
 }
 
 void	ft_parser(t_token *head,t_parser *parser, t_shell *shell)

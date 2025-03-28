@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 21:39:02 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/28 22:27:38 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,13 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+
+typedef struct s_env
+{
+	char *variable;
+	char *content;
+	struct s_env *next;
+}		t_env;
 
 typedef struct s_parser
 {
@@ -46,6 +53,7 @@ typedef struct s_shell
 	int				qoute_flag;
 	int				counter;
 	int				temp_index;
+	t_env	*env;
 }					t_shell;
 
 typedef enum s_type
@@ -86,17 +94,17 @@ typedef struct s_expand
 	int		single_qoute;
 } t_expand;
 
-typedef struct s_echo
-{
-	int				single_qoute;
-	int				double_qoute;
-	int				new_line;
-	int				index;
-	int				index_out;
-	char			*string;
-	char			*expand;
-	char			*output;
-}					t_echo;
+// typedef struct s_echo
+// {
+// 	int				single_qoute;
+// 	int				double_qoute;
+// 	int				new_line;
+// 	int				index;
+// 	int				index_out;
+// 	char			*string;
+// 	char			*expand;
+// 	char			*output;
+// }					t_echo;
 
 // toknizer
 t_token				*tokenizer(t_shell *shell);
@@ -140,14 +148,14 @@ void				replace_env(t_shell *shell, t_export *export);
 void				export_command(t_shell *shell);
 
 // env command
-void				env_copy(t_shell *shell, char **env);
+void env_copy(t_shell *shell, char **env);
 void				env_command(t_shell *shell);
 
 // echo command
-void				set_flags(t_echo *all, t_shell *shell);
-// void				copy_var(t_shell *shell, t_echo *all);
-// void				check_env(t_shell *shell, t_echo *all);
-void				dollar_sign(t_shell *shell, t_echo *all);
-void				echo_command(t_shell *shell);
+// void				set_flags(t_echo *all, t_shell *shell);
+// // void				copy_var(t_shell *shell, t_echo *all);
+// // void				check_env(t_shell *shell, t_echo *all);
+// void				dollar_sign(t_shell *shell, t_echo *all);
+// void				echo_command(t_shell *shell);
 
 #endif

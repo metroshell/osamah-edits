@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 21:31:16 by oalananz          #+#    #+#             */
-/*   Updated: 2025/02/22 21:31:26 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/28 22:28:15 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,77 @@
 
 
 //env command
-void    env_command(t_shell *shell)
+// void    env_command(t_shell *shell)
+// {
+//     int i = 0;
+//     if(ft_strncmp(shell->prompt , "env", 3) == 0)
+//     {
+//         while (shell->environment[i])
+//         {
+//             ft_printf("%s\n", shell->environment[i]);
+//             i++;
+//         }
+//     }
+// }
+
+void    copy_variable(t_shell *shell,t_env *temp,char **env)
 {
-    int i = 0;
-    if(ft_strncmp(shell->prompt , "env", 3) == 0)
-    {
-        while (shell->environment[i])
-        {
-            ft_printf("%s\n", shell->environment[i]);
-            i++;
-        }
-    }
+    int end;
+
+    end = 0;
+    while(env[shell->temp_index][end] != '=' && env[shell->temp_index][end])
+        end++;
+    temp->variable=ft_substr(env[shell->temp_index],0,end);
+    if(!temp->variable)
+        return ;
+}
+
+void    copy_content(t_shell *shell,t_env *temp,char **env)
+{
+    int end;
+    int start;
+
+    end = 0;
+    start = 0;
+    while(env[shell->temp_index][start] != '=' && env[shell->temp_index][start])
+        start++;
+    while(env[shell->temp_index][end])
+        end++;
+    start++;
+    temp->content=ft_substr(env[shell->temp_index],start,end);
+    if(!temp->content)
+        return ;
+}
+
+t_env   *create_env_node()
+{
+    t_env   *new_node;
+
+    new_node = malloc(sizeof(t_env));
+	if (!new_node)
+		exit(EXIT_FAILURE);
+    new_node->next = NULL;
+    return(new_node);
 }
 
 //enviroment copy
 void    env_copy(t_shell *shell, char **env)
 {
-    int i = 0;
-    while (env[i] != NULL)
-        i++;
-    shell->env_counter = i;
-    shell->environment = ft_calloc(i + 1, sizeof(char *));
-    if (!shell->environment)
-        exit(EXIT_FAILURE);
-    i = 0;
-    while (env[i] != NULL)
+    shell->env = create_env_node();
+    if (!shell->env)
+        return ;
+    t_env *temp = shell->env;
+    shell->temp_index = 0;
+    while (env[shell->temp_index])
     {
-        shell->environment[i] = ft_strdup(env[i]);
-        if (!shell->environment[i])
-            exit(EXIT_FAILURE);
-        i++;
+        copy_variable(shell, temp, env);
+        copy_content(shell, temp, env);
+        if (env[shell->temp_index + 1])
+        {
+            temp->next = create_env_node();
+            temp = temp->next;
+        }
+        shell->temp_index++;
     }
-    shell->environment[i] = NULL;
+    shell->temp_index = 0;
 }
