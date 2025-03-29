@@ -11,6 +11,7 @@ SRCS = ft_toupper.c ft_tolower.c ft_isalpha.c ft_memset.c ft_bzero.c ft_atoi.c f
 	get_next_line/get_next_line_utils.c get_next_line/get_next_line.c\
 	ft_printf/ft_printf.c ft_printf/ft_ptr.c ft_printf/ft_putchar.c ft_printf/ft_putnbr.c\
 	ft_printf/ft_putstr.c ft_printf/ft_tohex.c ft_printf/ft_unsignednb.c\
+	ft_strcmp.c
 
 BSRS = ft_lstnew.c ft_lstadd_front.c ft_lstsize.c ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c\
        ft_lstclear.c ft_lstiter.c ft_lstmap.c\

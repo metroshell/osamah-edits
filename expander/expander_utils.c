@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 14:10:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/27 15:29:21 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/29 04:32:43 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,28 +38,26 @@ void    copy_var(t_token *token, t_expand *expand)
         i++;
         expand->inner_index++;
     }
-    expand->variable[i] = '=';
-    i++;
     expand->variable[i] = '\0';
     expand->inner_index -= i - 1;
 }
 
 void    check_env(t_shell *shell, t_expand *expand)
 {
-    int	i;
+    t_env *current;
 
-    i = 0;
-	while (shell->environment[i])
-	{
-		if (ft_strncmp(shell->environment[i], expand->variable, ft_strlen(expand->variable)) == 0)
-		{
-            expand->output = ft_strdup(&shell->environment[i][ft_strlen(expand->variable)]);
-            return ;
-		}
-		i++;
-	}
+    current = shell->env;
+    while (current)
+    {
+        if (ft_strcmp(current->variable, expand->variable) == 0)
+        {
+            expand->output = ft_strdup(current->content);
+            return;
+        }
+        current = current->next;
+    }
+    expand->output = NULL;
 }
-
 
 void    expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 {
@@ -77,6 +75,7 @@ void    expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 
 void    count_quotes(t_token *token,t_expand *expand)
 {
+    expand->quotes_count = 0;
     expand->quote = token->content[expand->outer_index][expand->inner_index];
     if(expand->quote == '\'')
         expand->single_qoute = 1;

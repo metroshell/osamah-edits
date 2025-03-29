@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 16:06:40 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 21:45:02 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/29 04:37:32 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,10 @@ void    check_cmd(t_token *token, t_expand *expand, char **paths)
 
 void    quote_remover(t_token *token,t_expand *expand)
 {
-    int tmp;
+    //int tmp;
     
     expand->quote_flag = 1;
-    tmp = expand->inner_index;
+    //tmp = expand->inner_index;
     count_quotes(token,expand);
     if(expand->quote_flag == 2)
         return ;
@@ -98,7 +98,7 @@ void    quote_remover(t_token *token,t_expand *expand)
     temp[i] = '\0';
     free(token->content[expand->outer_index]);
     token->content[expand->outer_index] = temp;
-    expand->inner_index = tmp + 1;
+    // expand->inner_index = tmp + 1;
 }
 
 void    ft_expander(t_shell *shell, t_token *token)
@@ -111,6 +111,7 @@ void    ft_expander(t_shell *shell, t_token *token)
     (void) shell;
     while(token)
     {
+        expand->outer_index = 0;
         while(token->content[expand->outer_index])
         {
             if(token->type[expand->outer_index] == TEXT)
@@ -120,11 +121,12 @@ void    ft_expander(t_shell *shell, t_token *token)
                     if(token->content[expand->outer_index][expand->inner_index] == '\"'
                         || token->content[expand->outer_index][expand->inner_index] == '\'')
                         quote_remover(token,expand);
-                    expand->inner_index++;
                     if(expand->quote_flag)
                         break ;
+                    expand->inner_index++;
                 }
-                check_cmd(token,expand,shell->paths);
+                if(token->content[expand->outer_index][0] != '\0')
+                    check_cmd(token,expand,shell->paths);
                 expand->inner_index = 0;
                 while(token->content[expand->outer_index][expand->inner_index])
                 {
@@ -132,8 +134,10 @@ void    ft_expander(t_shell *shell, t_token *token)
                         expand_dollar(shell,token,expand);
                     expand->inner_index++;
                 }
-                expand->inner_index = 0;
             }
+            expand->inner_index = 0;
+            expand->quote_flag = 0;
+            expand->single_qoute = 0;
             expand->outer_index++;
         }
         token = token->next;
