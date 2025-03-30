@@ -32,27 +32,27 @@ char	*ft_strchr(const char *s, int c)
 		return (NULL);
 }
 /*
-int main(void)
+int	main(void)
 {
-    const char *str = "teste";
-    //char ch = 1024;
-    char *result;
+	const char *str = "teste";
+	//char ch = 1024;
+	char *result;
 
-    result = ft_strchr(str, 'e');
-    if (result != NULL) 
-    {
-        //printf("Character '%c' found at position: %ld\n", ch, result - str);
-        printf("Substring from found character: %s\n", result);
-    } 
-    else
-    {
-        printf("Character '%c' not found in the string.\n", 1024);
-    }
-    result = ft_strchr(str, '\0');
-    if (result != NULL) 
-    {
-        printf("Null terminator found at position: %ld\n", result - str);
-        printf("Substring from null terminator: %s\n", result);
-    }
-    return (0);
+	result = ft_strchr(str, 'e');
+	if (result != NULL)
+	{
+		//printf("Character '%c' found at position: %ld\n", ch, result - str);
+		printf("Substring from found character: %s\n", result);
+	}
+	else
+	{
+		printf("Character '%c' not found in the string.\n", 1024);
+	}
+	result = ft_strchr(str, '\0');
+	if (result != NULL)
+	{
+		printf("Null terminator found at position: %ld\n", result - str);
+		printf("Substring from null terminator: %s\n", result);
+	}
+	return (0);
 }*/

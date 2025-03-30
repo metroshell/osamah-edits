@@ -5,88 +5,91 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/27 14:10:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/29 04:32:43 by oalananz         ###   ########.fr       */
+/*   Created: 2025/03/30 05:58:19 by oalananz          #+#    #+#             */
+/*   Updated: 2025/03/30 06:09:16 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    get_length(t_token *token, t_expand *expand)
+void	check_cmd(t_token *token, t_expand *expand, char **paths)
 {
-    while(ft_isalpha(token->content[expand->outer_index][expand->inner_index])
-        && token->content[expand->outer_index][expand->inner_index] )
-    {
-        expand->var_length++;
-        expand->inner_index++;
-    }
-    expand->inner_index -= expand->var_length;
-    expand->var_length++;
+	char	*command_path;
+	int		i;
+
+	command_path = NULL;
+	i = 0;
+	while (paths[i])
+	{
+		command_path = ft_strjoin(paths[i], token->content[expand->outer]);
+		if (!command_path)
+			exit(EXIT_FAILURE);
+		if (!access(command_path, X_OK))
+		{
+			token->type[expand->outer] = COMMAND;
+			break ;
+		}
+		i++;
+	}
+	if (command_path)
+		free(command_path);
 }
 
-void    copy_var(t_token *token, t_expand *expand)
+void	quote_remover(t_token *token, t_expand *expand)
 {
-    get_length(token,expand);
-    expand->variable = malloc(expand->var_length + 1);
-    if (!expand->variable)
-        return ;
-    int i = 0;
-    while(ft_isalpha(token->content[expand->outer_index][expand->inner_index])
-        && token->content[expand->outer_index][expand->inner_index] )
-    {
-        expand->variable[i] = token->content[expand->outer_index][expand->inner_index];
-        i++;
-        expand->inner_index++;
-    }
-    expand->variable[i] = '\0';
-    expand->inner_index -= i - 1;
+	char	*temp;
+	int		i;
+
+	expand->quote_flag = 1;
+	count_quotes(token, expand);
+	if (expand->quote_flag == 2)
+		return ;
+	expand->inner = 0;
+	i = 0;
+	temp = malloc(ft_strlen(token->content[expand->outer])
+			- expand->quotes_count + 1);
+	if (!temp)
+		return ;
+	while (token->content[expand->outer][i])
+	{
+		if (token->content[expand->outer][expand->inner] == expand->quote)
+			expand->inner++;
+		else
+			temp[i++] = token->content[expand->outer][expand->inner++];
+	}
+	temp[i] = '\0';
+	free(token->content[expand->outer]);
+	token->content[expand->outer] = temp;
 }
 
-void    check_env(t_shell *shell, t_expand *expand)
+void	expand_dollar(t_shell *shell, t_token *token, t_expand *expand)
 {
-    t_env *current;
-
-    current = shell->env;
-    while (current)
-    {
-        if (ft_strcmp(current->variable, expand->variable) == 0)
-        {
-            expand->output = ft_strdup(current->content);
-            return;
-        }
-        current = current->next;
-    }
-    expand->output = NULL;
+	expand->inner++;
+	if (ft_isalpha(token->content[expand->outer][expand->inner]))
+	{
+		copy_var(token, expand);
+		check_env(shell, expand);
+	}
+	if (ft_isdigit(token->content[expand->outer][expand->inner])
+		&& token->content[expand->outer][expand->inner] == '0')
+		expand->output = ft_strdup("bash");
+	ft_outjoin(token, expand);
 }
 
-void    expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
+void	count_quotes(t_token *token, t_expand *expand)
 {
-    expand->inner_index++;
-    if(ft_isalpha(token->content[expand->outer_index][expand->inner_index]))
-    {
-        copy_var(token,expand);
-        check_env(shell,expand);
-    }
-    if(ft_isdigit(token->content[expand->outer_index][expand->inner_index]) 
-        && token->content[expand->outer_index][expand->inner_index] == '0')
-        expand->output = ft_strdup("bash");
-    ft_outjoin(token,expand);
-}
-
-void    count_quotes(t_token *token,t_expand *expand)
-{
-    expand->quotes_count = 0;
-    expand->quote = token->content[expand->outer_index][expand->inner_index];
-    if(expand->quote == '\'')
-        expand->single_qoute = 1;
-    expand->quotes_count++;
-    expand->inner_index++;
-    while(token->content[expand->outer_index][expand->inner_index])
-    {
-        if(token->content[expand->outer_index][expand->inner_index] == expand->quote)
-            expand->quotes_count++;
-        expand->inner_index++;
-    }
-    if(expand->quotes_count % 2 != 0)
-        expand->quote_flag = 2;
+	expand->quotes_count = 0;
+	expand->quote = token->content[expand->outer][expand->inner];
+	if (expand->quote == '\'')
+		expand->single_qoute = 1;
+	expand->quotes_count++;
+	expand->inner++;
+	while (token->content[expand->outer][expand->inner])
+	{
+		if (token->content[expand->outer][expand->inner] == expand->quote)
+			expand->quotes_count++;
+		expand->inner++;
+	}
+	if (expand->quotes_count % 2 != 0)
+		expand->quote_flag = 2;
 }

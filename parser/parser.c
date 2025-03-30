@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:04:10 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 22:30:23 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/29 04:54:57 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,24 +44,24 @@ void	add_backslash(t_shell *shell)
 // take a copy of paths to detect commands
 void	get_paths(t_shell *shell)
 {
-    t_env	*current;
+	t_env	*current;
 
-    current = shell->env; // Start from the head of the linked list
-    while (current)
-    {
-        if (ft_strncmp(current->variable, "PATH", 4) == 0 && current->content)
-        {
-            shell->paths = ft_split(current->content, ':');
-            if (!shell->paths)
-                exit(EXIT_FAILURE);
-            add_backslash(shell);
-            break;
-        }
-        current = current->next;
-    }
+	current = shell->env;
+	while (current)
+	{
+		if (ft_strncmp(current->variable, "PATH", 4) == 0 && current->content)
+		{
+			shell->paths = ft_split(current->content, ':');
+			if (!shell->paths)
+				exit(EXIT_FAILURE);
+			add_backslash(shell);
+			break ;
+		}
+		current = current->next;
+	}
 }
 
-void	ft_parser(t_token *head,t_parser *parser, t_shell *shell)
+void	ft_parser(t_token *head, t_parser *parser, t_shell *shell)
 {
 	get_paths(shell);
 	while (head)
@@ -74,7 +74,7 @@ void	ft_parser(t_token *head,t_parser *parser, t_shell *shell)
 			detect_redirect(parser, head);
 			detect_heredoc(parser, head);
 			parser->index++;
-			if (parser->filename_flag )
+			if (parser->filename_flag)
 				detect_filename(parser, head);
 		}
 		parser->index = 0;

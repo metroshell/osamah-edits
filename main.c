@@ -12,32 +12,31 @@
 
 #include "minishell.h"
 
-
 void	print_type(t_type type)
 {
-	switch(type)
+	switch (type)
 	{
-		case COMMAND:
-			printf("COMMAND\n");
-			break ;
-		case ARGUMENT:
-			printf("ARGUMENT\n");
-			break ;
-		case HEREDOC:
-			printf("HEREDOC\n");
-			break ;
-		case APPEND:
-			printf("APPEND\n");
-			break ;
-		case TEXT:
-			printf("TEXT\n");
-			break ;
-		case REDIRECT:
-			printf("REDIRECT\n");
-			break ;
-		case FILENAME:
-			printf("FILENAME\n");
-			break ;
+	case COMMAND:
+		printf("COMMAND\n");
+		break ;
+	case ARGUMENT:
+		printf("ARGUMENT\n");
+		break ;
+	case HEREDOC:
+		printf("HEREDOC\n");
+		break ;
+	case APPEND:
+		printf("APPEND\n");
+		break ;
+	case TEXT:
+		printf("TEXT\n");
+		break ;
+	case REDIRECT:
+		printf("REDIRECT\n");
+		break ;
+	case FILENAME:
+		printf("FILENAME\n");
+		break ;
 	}
 }
 
@@ -66,26 +65,27 @@ void	print_tokens(t_token *arg)
 // print env
 #include "minishell.h"
 
-void print_env(t_env *env)
+void	print_env(t_env *env)
 {
-    t_env *current;
+	t_env	*current;
 
-    current = env;
-    while (current)
-    {
-        if (current->variable && current->content)
-            printf("%s=%s\n", current->variable, current->content);
-        else if (current->variable)
-            printf("%s=\n", current->variable);
-        current = current->next;
-    }
+	current = env;
+	while (current)
+	{
+		if (current->variable && current->content)
+			printf("%s=%s\n", current->variable, current->content);
+		else if (current->variable)
+			printf("%s=\n", current->variable);
+		current = current->next;
+	}
 }
 
 // take the arguments and the enviroment
 int	main(int argc, char **argv, char **env)
 {
-	t_shell	*shell;
-	t_token	*tokens;
+	t_shell		*shell;
+	t_token		*tokens;
+	t_parser	*parser;
 
 	(void)argv;
 	if (argc > 1)
@@ -96,12 +96,9 @@ int	main(int argc, char **argv, char **env)
 	shell = ft_calloc(1, sizeof(t_shell));
 	if (!shell)
 		exit(EXIT_FAILURE);
-	t_parser	*parser;
-
 	parser = ft_calloc(1, sizeof(t_parser));
 	if (!parser)
 		exit(EXIT_FAILURE);
-	
 	env_copy(shell, env);
 	// print_env(shell->env);
 	while (1)
@@ -111,14 +108,14 @@ int	main(int argc, char **argv, char **env)
 		{
 			add_history(shell->prompt);
 			tokens = tokenizer(shell);
-			ft_parser(tokens,parser, shell);
-			ft_expander(shell,tokens);
+			ft_parser(tokens, parser, shell);
+			ft_expander(shell, tokens);
 			print_tokens(tokens);
 		}
 		else
 			exit(EXIT_FAILURE);
 	}
-	free (shell);
+	free(shell);
 	rl_clear_history();
 	free(shell->prompt);
 	return (0);

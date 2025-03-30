@@ -1,23 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 03:54:25 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/29 05:01:51 by oalananz         ###   ########.fr       */
+/*   Created: 2025/03/30 05:18:33 by oalananz          #+#    #+#             */
+/*   Updated: 2025/03/30 05:19:37 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-int	ft_strcmp(char *s1, char *s2)
+// print env
+void	print_env(t_env *env)
 {
-	int	i;
+	t_env	*current;
 
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
-		i++;
-	return (s1[i] - s2[i]);
+	current = env;
+	while (current)
+	{
+		if (current->variable && current->content)
+			printf("%s=%s\n", current->variable, current->content);
+		else if (current->variable)
+			printf("%s=\n", current->variable);
+		current = current->next;
+	}
 }

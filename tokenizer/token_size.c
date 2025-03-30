@@ -18,8 +18,8 @@ void	count_qoutes(t_shell *shell)
 
 	detect = shell->prompt[shell->temp_index];
 	shell->temp_index++;
-	while(shell->prompt[shell->temp_index] != detect)
-				shell->temp_index++;
+	while (shell->prompt[shell->temp_index] != detect)
+		shell->temp_index++;
 	while (shell->prompt[shell->temp_index])
 	{
 		if (shell->prompt[shell->temp_index] == detect)
@@ -41,16 +41,16 @@ void	count_without_qoutes(t_shell *shell)
 		&& shell->prompt[shell->temp_index] != ' '
 		&& shell->prompt[shell->temp_index])
 	{
-		if(shell->prompt[shell->temp_index] == '\'')
+		if (shell->prompt[shell->temp_index] == '\'')
 		{
 			shell->temp_index++;
-			while(shell->prompt[shell->temp_index] != '\'')
+			while (shell->prompt[shell->temp_index] != '\'')
 				shell->temp_index++;
 		}
-		else if(shell->prompt[shell->temp_index] == '\"')
+		else if (shell->prompt[shell->temp_index] == '\"')
 		{
 			shell->temp_index++;
-			while(shell->prompt[shell->temp_index] != '\"')
+			while (shell->prompt[shell->temp_index] != '\"')
 				shell->temp_index++;
 		}
 		shell->temp_index++;

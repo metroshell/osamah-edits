@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
 
 size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {

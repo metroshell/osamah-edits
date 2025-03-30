@@ -46,7 +46,7 @@ char	*ft_itoa(int n)
 
 	i = 0;
 	nlen = numlen(n);
-	res = (char *) malloc (nlen + 1);
+	res = (char *)malloc(nlen + 1);
 	if (!res)
 		return (0);
 	nbr = n;
@@ -62,6 +62,7 @@ char	*ft_itoa(int n)
 }
 /*
 #include <stdio.h>
+
 int	main(void)
 {
 	printf("%s\n", ft_itoa(9));

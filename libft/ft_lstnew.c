@@ -17,25 +17,25 @@ t_list	*ft_lstnew(void *content)
 	t_list	*head;
 
 	head = NULL;
-	head = (t_list *) malloc (sizeof(t_list));
+	head = (t_list *)malloc(sizeof(t_list));
 	if (!head)
 		return (NULL);
-	head ->content = content;
-	head ->next = NULL;
+	head->content = content;
+	head->next = NULL;
 	return (head);
 }
 /*
 int	main(void)
 {
-    char	*test_content = "qais hatahet";
+	char	*test_content = "qais hatahet";
 
-    t_list *node = ft_lstnew((void *)test_content);
-    if (node == NULL)
-    {
-        printf("Failed to create a new list node.\n");
-        return 1;
-    }
-    printf("Node content: %s\n", (char *)node->content);
-    free(node);
-    return (0);
+	t_list *node = ft_lstnew((void *)test_content);
+	if (node == NULL)
+	{
+		printf("Failed to create a new list node.\n");
+		return (1);
+	}
+	printf("Node content: %s\n", (char *)node->content);
+	free(node);
+	return (0);
 }*/

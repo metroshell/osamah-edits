@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 22:27:38 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/03/30 06:08:46 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 
 typedef struct s_env
 {
-	char *variable;
-	char *content;
-	struct s_env *next;
-}		t_env;
+	char			*variable;
+	char			*content;
+	struct s_env	*next;
+}					t_env;
 
 typedef struct s_parser
 {
@@ -53,17 +53,17 @@ typedef struct s_shell
 	int				qoute_flag;
 	int				counter;
 	int				temp_index;
-	t_env	*env;
+	t_env			*env;
 }					t_shell;
 
 typedef enum s_type
 {
-	TEXT ,
-	COMMAND ,
-	ARGUMENT ,
-	HEREDOC ,
-	APPEND ,
-	REDIRECT ,
+	TEXT,
+	COMMAND,
+	ARGUMENT,
+	HEREDOC,
+	APPEND,
+	REDIRECT,
 	FILENAME
 }					t_type;
 
@@ -83,16 +83,16 @@ typedef struct s_export
 
 typedef struct s_expand
 {
-	int outer_index;
-	int inner_index;
-	int quotes_count;
-	int quote_flag;
-	char quote;
+	int				outer;
+	int				inner;
+	int				quotes_count;
+	int				quote_flag;
+	char			quote;
 	char			*output;
 	char			*variable;
-	int		var_length;
-	int		single_qoute;
-} t_expand;
+	int				var_length;
+	int				single_qoute;
+}					t_expand;
 
 // typedef struct s_echo
 // {
@@ -123,7 +123,7 @@ void				check_prompt_4(t_shell *shell);
 void				check_errors(t_shell *shell);
 
 // parser
-void				ft_parser(t_token *head,t_parser *parser, t_shell *shell);
+void				ft_parser(t_token *head, t_parser *parser, t_shell *shell);
 void				detect_heredoc(t_parser *parser, t_token *temp);
 void				detect_arguments(t_parser *parser, t_token *temp);
 void				detect_command(t_parser *parser, t_token *temp,
@@ -132,13 +132,16 @@ void				detect_redirect(t_parser *parser, t_token *temp);
 void				detect_filename(t_parser *parser, t_token *temp);
 
 // expander
-void    ft_expander(t_shell *shell, t_token *token);
-void    count_quotes(t_token *token,t_expand *expand);
-void    expand_dollar(t_shell *shell,t_token *token, t_expand *expand);
-void    check_env(t_shell *shell, t_expand *expand);
-void    copy_var(t_token *token, t_expand *expand);
-void    get_length(t_token *token, t_expand *expand);
-void    ft_outjoin(t_token *token,t_expand *expand);
+void				ft_expander(t_shell *shell, t_token *token);
+void				count_quotes(t_token *token, t_expand *expand);
+void				expand_dollar(t_shell *shell, t_token *token,
+						t_expand *expand);
+void				check_env(t_shell *shell, t_expand *expand);
+void				copy_var(t_token *token, t_expand *expand);
+void				get_length(t_token *token, t_expand *expand);
+void				ft_outjoin(t_token *token, t_expand *expand);
+void				check_cmd(t_token *token, t_expand *expand, char **paths);
+void				quote_remover(t_token *token, t_expand *expand);
 
 // export command
 void				export_var(t_shell *shell, t_export *export);
@@ -148,8 +151,9 @@ void				replace_env(t_shell *shell, t_export *export);
 void				export_command(t_shell *shell);
 
 // env command
-void env_copy(t_shell *shell, char **env);
+void				env_copy(t_shell *shell, char **env);
 void				env_command(t_shell *shell);
+void				print_env(t_env *env);
 
 // echo command
 // void				set_flags(t_echo *all, t_shell *shell);
