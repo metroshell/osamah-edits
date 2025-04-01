@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/30 06:08:46 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 04:23:37 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,12 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include "builtin.h"
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
-
-typedef struct s_env
-{
-	char			*variable;
-	char			*content;
-	struct s_env	*next;
-}					t_env;
 
 typedef struct s_parser
 {
@@ -41,11 +35,7 @@ typedef struct s_parser
 
 typedef struct s_shell
 {
-	char			**environment;
-	int				env_counter;
 	char			**paths;
-	char			**history;
-	int				history_counter;
 	char			*prompt;
 	int				prompt_index;
 	int				token_index;
@@ -53,6 +43,8 @@ typedef struct s_shell
 	int				qoute_flag;
 	int				counter;
 	int				temp_index;
+	int				echo_flag;
+	int				quote_counter;
 	t_env			*env;
 }					t_shell;
 
@@ -74,13 +66,6 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
-typedef struct s_export
-{
-	int				index;
-	char			*variable;
-	int				find;
-}					t_export;
-
 typedef struct s_expand
 {
 	int				outer;
@@ -93,18 +78,6 @@ typedef struct s_expand
 	int				var_length;
 	int				single_qoute;
 }					t_expand;
-
-// typedef struct s_echo
-// {
-// 	int				single_qoute;
-// 	int				double_qoute;
-// 	int				new_line;
-// 	int				index;
-// 	int				index_out;
-// 	char			*string;
-// 	char			*expand;
-// 	char			*output;
-// }					t_echo;
 
 // toknizer
 t_token				*tokenizer(t_shell *shell);
@@ -142,24 +115,5 @@ void				get_length(t_token *token, t_expand *expand);
 void				ft_outjoin(t_token *token, t_expand *expand);
 void				check_cmd(t_token *token, t_expand *expand, char **paths);
 void				quote_remover(t_token *token, t_expand *expand);
-
-// export command
-void				export_var(t_shell *shell, t_export *export);
-void				scan_env(t_shell *shell, t_export *export);
-void				add_to_env(t_shell *shell, t_export *export);
-void				replace_env(t_shell *shell, t_export *export);
-void				export_command(t_shell *shell);
-
-// env command
-void				env_copy(t_shell *shell, char **env);
-void				env_command(t_shell *shell);
-void				print_env(t_env *env);
-
-// echo command
-// void				set_flags(t_echo *all, t_shell *shell);
-// // void				copy_var(t_shell *shell, t_echo *all);
-// // void				check_env(t_shell *shell, t_echo *all);
-// void				dollar_sign(t_shell *shell, t_echo *all);
-// void				echo_command(t_shell *shell);
 
 #endif

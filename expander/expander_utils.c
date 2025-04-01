@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 05:58:19 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/30 06:09:16 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 04:55:49 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	quote_remover(t_token *token, t_expand *expand)
 			- expand->quotes_count + 1);
 	if (!temp)
 		return ;
-	while (token->content[expand->outer][i])
+	while (token->content[expand->outer][expand->inner])
 	{
 		if (token->content[expand->outer][expand->inner] == expand->quote)
 			expand->inner++;

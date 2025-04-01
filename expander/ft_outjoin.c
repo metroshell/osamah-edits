@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 06:02:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/30 06:10:13 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 04:55:03 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ static int	handle_dollar(t_token *token, t_expand *expand, char *temp, int *i)
 	int	j;
 
 	j = 0;
+	expand->inner++;
+	if (ft_isalpha(token->content[expand->outer][expand->inner]))
+		expand->inner += expand->var_length - 1;
+	else if (ft_isdigit(token->content[expand->outer][expand->inner]))
+		expand->inner++;
 	if (expand->output)
 	{
-		expand->inner++;
-		if (ft_isalpha(token->content[expand->outer][expand->inner]))
-			expand->inner += expand->var_length - 1;
-		else if (ft_isdigit(token->content[expand->outer][expand->inner]))
-			expand->inner++;
 		while (expand->output[j])
 			temp[(*i)++] = expand->output[j++];
 		return (1);

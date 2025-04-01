@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 14:10:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/30 06:08:46 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 02:07:04 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,5 @@ void	check_env(t_shell *shell, t_expand *expand)
 		}
 		current = current->next;
 	}
-	expand->output = NULL;
+	expand->output = "\0";
 }

@@ -6,11 +6,12 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 22:39:01 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 03:10:16 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 void	print_type(t_type type)
 {
@@ -62,21 +63,19 @@ void	print_tokens(t_token *arg)
 	}
 }
 
-// print env
-#include "minishell.h"
-
-void	print_env(t_env *env)
+void	ft_executor(t_shell *shell, t_token *token)
 {
-	t_env	*current;
-
-	current = env;
-	while (current)
+	while (token)
 	{
-		if (current->variable && current->content)
-			printf("%s=%s\n", current->variable, current->content);
-		else if (current->variable)
-			printf("%s=\n", current->variable);
-		current = current->next;
+		if (token->content && token->content[0])
+		{
+			if (ft_strcmp(token->content[0], "env") == 0
+				&& token->content[1] == NULL)
+				print_env(shell->env);
+			else if (ft_strcmp(token->content[0], "echo") == 0)
+				echo_command(shell, token);
+		}
+		token = token->next;
 	}
 }
 
@@ -100,7 +99,6 @@ int	main(int argc, char **argv, char **env)
 	if (!parser)
 		exit(EXIT_FAILURE);
 	env_copy(shell, env);
-	// print_env(shell->env);
 	while (1)
 	{
 		shell->prompt = readline("Arab Spring 🐣🐥 -> ");
@@ -110,6 +108,7 @@ int	main(int argc, char **argv, char **env)
 			tokens = tokenizer(shell);
 			ft_parser(tokens, parser, shell);
 			ft_expander(shell, tokens);
+			ft_executor(shell, tokens);
 			print_tokens(tokens);
 		}
 		else
