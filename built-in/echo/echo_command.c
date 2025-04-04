@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 02:45:52 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 03:02:09 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 21:31:00 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,14 @@ void	echo_arument(t_shell *shell, t_token *token)
 void	echo_command(t_shell *shell, t_token *token)
 {
 	echo_arument(shell, token);
-	shell->temp_index = 0;
+	shell->temp_index = 1;
 	while (token->content[shell->temp_index])
 	{
-		if (token->type[shell->temp_index] == TEXT)
+		if (token->type[shell->temp_index] != ARGUMENT)
 		{
 			printf("%s", token->content[shell->temp_index]);
 			if (token->content[shell->temp_index + 1]
-				&& token->type[shell->temp_index + 1] == TEXT)
+				&& token->type[shell->temp_index + 1] != ARGUMENT)
 				printf(" ");
 		}
 		shell->temp_index++;

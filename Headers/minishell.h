@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 04:23:37 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 02:41:42 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,26 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
-# include "builtin.h"
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+
+typedef struct s_env
+{
+	char				*variable;
+	char				*content;
+	struct s_env		*next;
+}						t_env;
+
+typedef struct s_export
+{
+	int				index;
+	char			*variable;
+	char			*content;
+	int				flag;
+}					t_export;
 
 typedef struct s_parser
 {
@@ -115,5 +129,23 @@ void				get_length(t_token *token, t_expand *expand);
 void				ft_outjoin(t_token *token, t_expand *expand);
 void				check_cmd(t_token *token, t_expand *expand, char **paths);
 void				quote_remover(t_token *token, t_expand *expand);
+
+// env command
+void					env_copy(t_shell *shell, char **env);
+void					env_command(t_shell *shell);
+void					print_env(t_env *env);
+t_env					*create_env_node(void);
+
+// echo command
+void					echo_command(t_shell *shell, t_token *token);
+
+//export command
+void	ft_free_2d(char **a);
+void	sorted_print(t_env *env);
+void	export_command(t_shell *shell,t_token *token);
+void 	scan_env(t_shell *shell, t_export *export);
+
+// unset command
+void	unset_command(t_shell *shell, t_token *token);
 
 #endif

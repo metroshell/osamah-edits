@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 14:10:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 02:07:04 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 02:45:05 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,16 @@
 
 void	get_length(t_token *token, t_expand *expand)
 {
-	while (ft_isalpha(token->content[expand->outer][expand->inner])
+	while ((ft_isalpha(token->content[expand->outer][expand->inner])
+		|| token->content[expand->outer][expand->inner] == '_')
 		&& token->content[expand->outer][expand->inner])
 	{
 		expand->var_length++;
 		expand->inner++;
 	}
 	expand->inner -= expand->var_length;
+	printf("ls %d\n",expand->var_length);
+	printf("ex %d\n",expand->inner);
 	expand->var_length++;
 }
 
@@ -33,15 +36,16 @@ void	copy_var(t_token *token, t_expand *expand)
 	if (!expand->variable)
 		return ;
 	i = 0;
-	while (ft_isalpha(token->content[expand->outer][expand->inner])
-		&& token->content[expand->outer][expand->inner])
+	while (token->content[expand->outer][expand->inner]
+		&& (ft_isalpha(token->content[expand->outer][expand->inner])
+		|| token->content[expand->outer][expand->inner] == '_'))
 	{
 		expand->variable[i] = token->content[expand->outer][expand->inner];
 		i++;
 		expand->inner++;
 	}
 	expand->variable[i] = '\0';
-	expand->inner -= i - 1;
+	expand->inner -= i;
 }
 
 void	check_env(t_shell *shell, t_expand *expand)

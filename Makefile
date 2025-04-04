@@ -12,6 +12,8 @@ SRCS = main.c \
 	./parser/detect_type.c ./parser/parser.c \
 	./expander/expander.c  ./expander/expander_utils.c ./expander/expander_env.c ./expander/ft_outjoin.c \
 	./built-in/echo/echo_command.c \
+	./built-in/export/export.c ./built-in/export/export_utils.c \
+	./built-in/unset.c \
 
 OBJS_DIR := objects
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

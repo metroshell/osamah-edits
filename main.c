@@ -6,12 +6,11 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 03:10:16 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/01 21:54:23 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "builtin.h"
 
 void	print_type(t_type type)
 {
@@ -74,6 +73,10 @@ void	ft_executor(t_shell *shell, t_token *token)
 				print_env(shell->env);
 			else if (ft_strcmp(token->content[0], "echo") == 0)
 				echo_command(shell, token);
+			else if (ft_strcmp(token->content[0], "export") == 0)
+				export_command(shell,token);
+			else if(ft_strcmp(token->content[0], "unset") == 0)
+				unset_command(shell,token);
 		}
 		token = token->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 05:58:19 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 04:55:49 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 02:40:38 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	quote_remover(t_token *token, t_expand *expand)
 void	expand_dollar(t_shell *shell, t_token *token, t_expand *expand)
 {
 	expand->inner++;
-	if (ft_isalpha(token->content[expand->outer][expand->inner]))
+	if (ft_isalpha(token->content[expand->outer][expand->inner]) || token->content[expand->outer][expand->inner] == '_')
 	{
 		copy_var(token, expand);
 		check_env(shell, expand);
