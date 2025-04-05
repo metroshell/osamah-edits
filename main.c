@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 21:54:23 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 18:54:42 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int	main(int argc, char **argv, char **env)
 			ft_parser(tokens, parser, shell);
 			ft_expander(shell, tokens);
 			ft_executor(shell, tokens);
-			print_tokens(tokens);
+			 print_tokens(tokens);
 		}
 		else
 			exit(EXIT_FAILURE);

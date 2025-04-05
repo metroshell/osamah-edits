@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 05:58:19 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/05 02:40:38 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 16:13:12 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,30 +50,28 @@ void	quote_remover(t_token *token, t_expand *expand)
 			- expand->quotes_count + 1);
 	if (!temp)
 		return ;
+	expand->quotes_count = 0;
 	while (token->content[expand->outer][expand->inner])
 	{
 		if (token->content[expand->outer][expand->inner] == expand->quote)
+		{
+			expand->quotes_count++;
 			expand->inner++;
+			if(expand->quotes_count % 2 == 0)
+			{
+				while(token->content[expand->outer][expand->inner] && token->content[expand->outer][expand->inner] != '\'' && token->content[expand->outer][expand->inner] != '\"')
+					expand->inner++;
+				expand->quote = token->content[expand->outer][expand->inner];
+				if(expand->quote)
+					expand->single_qoute = 1;
+			}
+		}
 		else
 			temp[i++] = token->content[expand->outer][expand->inner++];
 	}
 	temp[i] = '\0';
 	free(token->content[expand->outer]);
 	token->content[expand->outer] = temp;
-}
-
-void	expand_dollar(t_shell *shell, t_token *token, t_expand *expand)
-{
-	expand->inner++;
-	if (ft_isalpha(token->content[expand->outer][expand->inner]) || token->content[expand->outer][expand->inner] == '_')
-	{
-		copy_var(token, expand);
-		check_env(shell, expand);
-	}
-	if (ft_isdigit(token->content[expand->outer][expand->inner])
-		&& token->content[expand->outer][expand->inner] == '0')
-		expand->output = ft_strdup("bash");
-	ft_outjoin(token, expand);
 }
 
 void	count_quotes(t_token *token, t_expand *expand)

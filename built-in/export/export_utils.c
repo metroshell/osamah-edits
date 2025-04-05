@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:33:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 21:35:54 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 15:00:17 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	sorted_print(t_env *env)
     i = 0;
     while (env_array[i])
     {
-        printf("declare -x %s\n", env_array[i]);
+        printf("declare -x \"%s\"\n", env_array[i]);
         i++;
     }
     ft_free_2d(env_array);

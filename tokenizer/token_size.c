@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 04:30:00 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:42:25 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	count_qoutes(t_shell *shell)
 
 	detect = shell->prompt[shell->temp_index];
 	shell->temp_index++;
-	while (shell->prompt[shell->temp_index] != detect)
+	while (shell->prompt[shell->temp_index] != detect && shell->prompt[shell->temp_index])
 		shell->temp_index++;
 	while (shell->prompt[shell->temp_index])
 	{
