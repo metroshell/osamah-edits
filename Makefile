@@ -10,7 +10,7 @@ SRCS = main.c \
     ./built-in/environment/env.c ./built-in/environment/env_utils.c\
 	./tokenizer/tokenizer.c ./tokenizer/token_utils.c ./tokenizer/token_size.c ./tokenizer/prompt_check.c \
 	./parser/detect_type.c ./parser/parser.c \
-	./expander/expander.c  ./expander/expander_utils.c ./expander/expander_env.c ./expander/expand_dollar.c \
+	./expander/expander.c  ./expander/expander_quotes.c ./expander/expander_env.c ./expander/expand_dollar.c \
 	./built-in/echo/echo_command.c \
 	./built-in/export/export.c ./built-in/export/export_utils.c \
 	./built-in/unset.c \

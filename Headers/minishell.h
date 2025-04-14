@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/05 12:37:37 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/14 16:36:22 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,9 @@ typedef struct s_expand
 {
 	int				outer;
 	int				inner;
-	int				quotes_count;
-	int				quote_flag;
 	int				flag;
 	char			quote;
-	char			*output;
 	char			*variable;
-	int				var_length;
 	int				single_qoute;
 }					t_expand;
 
@@ -121,12 +117,9 @@ void				detect_filename(t_parser *parser, t_token *temp);
 
 // expander
 void				ft_expander(t_shell *shell, t_token *token);
-void				count_quotes(t_token *token, t_expand *expand);
+int	count_quotes(t_token *token, t_expand *expand);
 void				expand_dollar(t_shell *shell, t_token *token,
 						t_expand *expand);
-void				check_env(t_shell *shell, t_expand *expand);
-void				copy_var(t_token *token, t_expand *expand);
-void				get_length(t_token *token, t_expand *expand);
 void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand);
 void				check_cmd(t_token *token, t_expand *expand, char **paths);
 void				quote_remover(t_token *token, t_expand *expand);

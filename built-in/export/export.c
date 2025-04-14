@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:30:31 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/13 19:21:32 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/14 12:03:14 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	scan_env(t_shell *shell,t_export *export)
 	}
 	export->flag = -1;
 }
+
 void	concat_content(t_shell *shell,t_export *export)
 {
 	t_env	*current;
@@ -103,7 +104,7 @@ void	export_command(t_shell *shell,t_token *token)
 		{
 			export->index = 0;
 			export->flag = 0;
-			while(token->content[i][export->index] && token->content[1][export->index] != '=' && token->content[i][export->index] != '+')
+			while(token->content[i][export->index] && token->content[i][export->index] != '=' && token->content[i][export->index] != '+')
 				export->index++;
 			export->variable = ft_substr(token->content[i],0,export->index);
 			export->content = ft_substr(token->content[i],export->index + 1,ft_strlen(token->content[i]) - export->index - 1);
