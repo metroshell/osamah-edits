@@ -6,32 +6,55 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/05 12:42:25 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/15 18:09:26 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	count_qoutes(t_shell *shell)
-{
-	char	detect;
+// void	count_qoutes(t_shell *shell)
+// {
+// 	char	detect;
+// 	int		count;
 
-	detect = shell->prompt[shell->temp_index];
-	shell->temp_index++;
-	while (shell->prompt[shell->temp_index] != detect && shell->prompt[shell->temp_index])
-		shell->temp_index++;
-	while (shell->prompt[shell->temp_index])
-	{
-		if (shell->prompt[shell->temp_index] == detect)
-			shell->qoute_flag = 1;
-		if (shell->qoute_flag == 1 && (shell->prompt[shell->temp_index] == ' '
-				|| shell->prompt[shell->temp_index] == '|'
-				|| shell->prompt[shell->temp_index] == '>'
-				|| shell->prompt[shell->temp_index] == '<'))
-			break ;
-		shell->temp_index++;
-	}
-}
+// 	count = 0;
+// 	detect = shell->prompt[shell->temp_index];
+// 	count++;
+// 	shell->temp_index++;
+// 	while (shell->prompt[shell->temp_index] != detect && shell->prompt[shell->temp_index])
+// 		shell->temp_index++;
+// 	while (shell->prompt[shell->temp_index])
+// 	{
+// 		if (shell->prompt[shell->temp_index] == detect)
+// 		{
+// 			shell->qoute_flag = 1;
+// 			count++;
+// 		}
+// 		if (shell->qoute_flag == 1 && (shell->prompt[shell->temp_index] == ' '
+// 				|| shell->prompt[shell->temp_index] == '|'
+// 				|| shell->prompt[shell->temp_index] == '>'
+// 				|| shell->prompt[shell->temp_index] == '<'))
+// 			break ;
+// 		if(count % 2 == 0)
+// 		{
+// 			while (shell->prompt[shell->temp_index] &&
+// 				(shell->prompt[shell->temp_index] != ' '
+// 				&& shell->prompt[shell->temp_index] != '|'
+// 				&& shell->prompt[shell->temp_index] != '>'
+// 				&& shell->prompt[shell->temp_index] != '<'))
+// 			{
+// 				if(shell->prompt[shell->temp_index] == '\'' || shell->prompt[shell->temp_index] == '\"')
+// 				{
+// 					count++;
+// 					detect = shell->prompt[shell->temp_index];
+// 					break ;	
+// 				}
+// 				shell->temp_index++;
+// 			}
+// 		}
+// 		shell->temp_index++;
+// 	}
+// }
 
 void	count_without_qoutes(t_shell *shell)
 {
@@ -89,13 +112,11 @@ void	tokenizer_size(t_shell *shell)
 			count_redirection(shell);
 		else if (shell->prompt[shell->temp_index] != '\0')
 		{
-			if (shell->prompt[shell->temp_index] != '\"'
-				&& shell->prompt[shell->temp_index] != '\''
-				&& shell->prompt[shell->temp_index])
+			if (shell->prompt[shell->temp_index])
 				count_without_qoutes(shell);
-			if (shell->prompt[shell->temp_index] == '\"'
-				|| shell->prompt[shell->temp_index] == '\'')
-				count_qoutes(shell);
+			// if (shell->prompt[shell->temp_index] == '\"'
+			// 	|| shell->prompt[shell->temp_index] == '\'')
+			// 	count_qoutes(shell);
 			shell->counter++;
 		}
 	}

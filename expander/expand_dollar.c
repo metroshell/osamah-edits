@@ -18,7 +18,7 @@ static void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand, char
 
 	int count = 0;
 	expand->inner++;
-	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == 0)
+	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == '0')
 	{
 		char *digit = ft_strdup("bash");
 		expand->inner++;
@@ -30,7 +30,7 @@ static void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand, char
 		expand->inner++;
 	else
 	{
-		while(token->content[expand->outer][expand->inner] && ft_isalpha(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] != '_')
+		while(token->content[expand->outer][expand->inner] && (ft_isalpha(token->content[expand->outer][expand->inner]) || token->content[expand->outer][expand->inner] == '_'))
 		{
 			expand->inner++;
 			count++;
@@ -58,7 +58,7 @@ int		content_len(t_shell *shell,t_token *token, t_expand *expand)
 
 	int count = 0;
 	expand->inner++;
-	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == 0)
+	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == '0')
 	{
 		expand->inner++;
 		count += 4;
@@ -66,7 +66,7 @@ int		content_len(t_shell *shell,t_token *token, t_expand *expand)
 	else if(ft_isdigit(token->content[expand->outer][expand->inner]))
 		expand->inner++;
 	else
-		while(token->content[expand->outer][expand->inner] && ft_isalpha(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] != '_')
+		while(token->content[expand->outer][expand->inner] && (ft_isalpha(token->content[expand->outer][expand->inner]) || token->content[expand->outer][expand->inner] == '_'))
 		{
 			expand->inner++;
 			count++;
@@ -105,7 +105,7 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 				size++;
 			}
 		}
-		else if(token->content[expand->outer][expand->inner] == '\'')
+		if(token->content[expand->outer][expand->inner] == '\'')
 		{
 			size++;
 			expand->inner++;
@@ -124,6 +124,7 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 		}
 	}
 	expand->inner = 0;
+	printf("expected size = %d\n",size);
 	return (size);
 }
 
@@ -149,7 +150,7 @@ void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 					temp[i++] = token->content[expand->outer][expand->inner++];
 			}
 		}
-		else if(token->content[expand->outer][expand->inner] == '\'')
+		if(token->content[expand->outer][expand->inner] == '\'')
 		{
 			temp[i++] = token->content[expand->outer][expand->inner++];
 			while(token->content[expand->outer][expand->inner] && token->content[expand->outer][expand->inner] != '\'')
