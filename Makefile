@@ -13,7 +13,8 @@ SRCS = main.c signals.c\
 	./expander/expander.c  ./expander/expander_quotes.c ./expander/expander_env.c ./expander/expand_dollar.c \
 	./built-in/echo/echo_command.c \
 	./built-in/export/export.c ./built-in/export/export_utils.c \
-	./built-in/unset.c \
+	./built-in/unset.c ./built-in/cd.c ./built-in/pwd.c\
+	./execution/execution.c\
 
 OBJS_DIR := objects
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

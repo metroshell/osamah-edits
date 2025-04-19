@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 13:59:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/26 16:28:18 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:41:11 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,15 @@ t_token	*tokenizer(t_shell *shell)
 		&& shell->prompt[shell->prompt_index])
 	{
 		check_errors(shell);
-		if (shell->token_flag)
-			return (NULL);
 		check_prompt_2(shell, &token);
+		if (shell->token_flag)
+		{
+			ft_free_2d(head->content);
+			// ft_free_2d(head->content);
+			free (head);
+			// free (head);
+			return (NULL);
+		}
 		check_prompt_3(shell, &token);
 		while (shell->prompt_index < (int)ft_strlen(shell->prompt)
 			&& shell->prompt[shell->prompt_index] == ' ')

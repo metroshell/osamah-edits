@@ -3,14 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   detect_type.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:16:39 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/28 21:38:18 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/12 17:27:39 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	check_built_ins(t_parser *parser, t_token *temp)
+{
+	int	i;
+
+	i = 0;
+	if (!ft_strcmp(temp->content[parser->index], "cd"))
+		i = 1;
+	else if (!ft_strcmp(temp->content[parser->index], "export"))
+		i = 1;
+	else if (!ft_strcmp(temp->content[parser->index], "unset"))
+		i = 1;
+	else if (!ft_strcmp(temp->content[parser->index], "exit"))
+		i = 1;
+	else
+		i = 0;
+	if (i == 1)
+	{
+		temp->type[parser->index] = COMMAND;
+		parser->commands_counter++;
+		parser->command_flag = 1;
+		return (1);
+	}
+	else
+		return (0);
+}
 
 void	detect_command(t_parser *parser, t_token *temp, char **paths)
 {
@@ -19,6 +45,8 @@ void	detect_command(t_parser *parser, t_token *temp, char **paths)
 
 	command_path = NULL;
 	i = 0;
+	if (check_built_ins(parser, temp) == 1)
+		return ;
 	while (paths[i])
 	{
 		command_path = ft_strjoin(paths[i], temp->content[parser->index]);
@@ -28,12 +56,14 @@ void	detect_command(t_parser *parser, t_token *temp, char **paths)
 		{
 			temp->type[parser->index] = COMMAND;
 			parser->commands_counter++;
+			parser->command_flag = 1;
+			if (command_path)
+				free(command_path);
 			break ;
 		}
 		i++;
-	}
-	if (command_path)
 		free(command_path);
+	}
 }
 
 void	detect_arguments(t_parser *parser, t_token *temp)
@@ -64,10 +94,15 @@ void	detect_heredoc(t_parser *parser, t_token *temp)
 
 void	detect_redirect(t_parser *parser, t_token *temp)
 {
-	if (*temp->content[parser->index] == '>'
-		|| *temp->content[parser->index] == '<')
+	if (*temp->content[parser->index] == '>')
 	{
-		temp->type[parser->index] = REDIRECT;
+		temp->type[parser->index] = REDIRECTOUT;
+		parser->redirect_counter++;
+		parser->filename_flag = 1;
+	}
+	else if (*temp->content[parser->index] == '<')
+	{
+		temp->type[parser->index] = REDIRECTIN;
 		parser->redirect_counter++;
 		parser->filename_flag = 1;
 	}
@@ -77,4 +112,5 @@ void	detect_filename(t_parser *parser, t_token *temp)
 {
 	temp->type[parser->index] = FILENAME;
 	parser->filename_counter++;
+	parser->index++;
 }

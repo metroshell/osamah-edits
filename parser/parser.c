@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 00:04:10 by oalananz          #+#    #+#             */
-/*   Updated: 2025/03/29 04:54:57 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/12 17:27:27 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,12 @@ void	ft_parser(t_token *head, t_parser *parser, t_shell *shell)
 	get_paths(shell);
 	while (head)
 	{
+		parser->command_flag = 0;
 		while (head->content[parser->index])
 		{
 			parser->filename_flag = 0;
-			detect_command(parser, head, shell->paths);
+			if (!parser->command_flag)
+				detect_command(parser, head, shell->paths);
 			detect_arguments(parser, head);
 			detect_redirect(parser, head);
 			detect_heredoc(parser, head);
@@ -80,4 +82,5 @@ void	ft_parser(t_token *head, t_parser *parser, t_shell *shell)
 		parser->index = 0;
 		head = head->next;
 	}
+	ft_free_2d(shell->paths);
 }

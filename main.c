@@ -3,66 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/19 17:07:35 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:04:53 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	print_type(t_type type)
-{
-	switch (type)
-	{
-	case COMMAND:
-		printf("COMMAND\n");
-		break ;
-	case ARGUMENT:
-		printf("ARGUMENT\n");
-		break ;
-	case HEREDOC:
-		printf("HEREDOC\n");
-		break ;
-	case APPEND:
-		printf("APPEND\n");
-		break ;
-	case TEXT:
-		printf("TEXT\n");
-		break ;
-	case REDIRECT:
-		printf("REDIRECT\n");
-		break ;
-	case FILENAME:
-		printf("FILENAME\n");
-		break ;
-	}
-}
+// void	print_type(t_type type)
+// {
+// 	switch (type)
+// 	{
+// 	case COMMAND:
+// 		printf("COMMAND\n");
+// 		break ;
+// 	case ARGUMENT:
+// 		printf("ARGUMENT\n");
+// 		break ;
+// 	case HEREDOC:
+// 		printf("HEREDOC\n");
+// 		break ;
+// 	case APPEND:
+// 		printf("APPEND\n");
+// 		break ;
+// 	case TEXT:
+// 		printf("TEXT\n");
+// 		break ;
+// 	case REDIRECT:
+// 		printf("REDIRECT\n");
+// 		break ;
+// 	case FILENAME:
+// 		printf("FILENAME\n");
+// 		break ;
+// 	}
+// }
 
-// test the tokenizer
-void	print_tokens(t_token *arg)
-{
-	t_token	*tmp;
-	int		i;
+// // test the tokenizer
+// void	print_tokens(t_token *arg)
+// {
+// 	t_token	*tmp;
+// 	int		i;
 
-	tmp = arg;
-	while (tmp)
-	{
-		i = 0;
-		while (tmp->content[i])
-		{
-			printf("argv[%i] = %s , type = ", i, tmp->content[i]);
-			print_type(tmp->type[i]);
-			i++;
-		}
-		tmp = tmp->next;
-		if (tmp)
-			printf("------->%c\n", '|');
-	}
-}
+// 	tmp = arg;
+// 	while (tmp)
+// 	{
+// 		i = 0;
+// 		while (tmp->content[i])
+// 		{
+// 			printf("argv[%i] = %s , type = ", i, tmp->content[i]);
+// 			print_type(tmp->type[i]);
+// 			i++;
+// 		}
+// 		tmp = tmp->next;
+// 		if (tmp)
+// 			printf("------->%c\n", '|');
+// 	}
+// }
 
-void	ft_executor(t_shell *shell, t_token *token)
+int	ft_executor(t_shell *shell, t_token *token)
 {
 	while (token)
 	{
@@ -70,15 +70,123 @@ void	ft_executor(t_shell *shell, t_token *token)
 		{
 			if (ft_strcmp(token->content[0], "env") == 0
 				&& token->content[1] == NULL)
+			{
 				print_env(shell->env);
+				return (1);	
+			}
 			else if (ft_strcmp(token->content[0], "echo") == 0)
+			{
 				echo_command(shell, token);
+				return (1);
+			}	
 			else if (ft_strcmp(token->content[0], "export") == 0)
+			{
 				export_command(shell,token);
+				return (1);
+			}
 			else if(ft_strcmp(token->content[0], "unset") == 0)
+			{
 				unset_command(shell,token);
+				return (1);
+			}	
+			else if(ft_strcmp(token->content[0], "pwd") == 0)
+			{
+				ft_pwd();
+				return (1);
+			}	
+			else if(ft_strcmp(token->content[0], "cd") == 0)
+			{
+				ft_cd(shell,token);
+				return (1);
+			}
 		}
 		token = token->next;
+	}
+	return (0);
+}
+
+void	free_env(t_env *env)
+{
+	while(env)
+	{
+		if (env->variable)
+			free(env->variable);
+		if (env->content)
+			free(env->content);
+		env = env->next;
+	}
+	free(env);
+}
+
+void	free_tokenizer(t_token *tokens)
+{
+	while (tokens)
+	{
+		if (tokens->content)
+			ft_free_2d(tokens->content);
+		if (tokens->type)
+			free(tokens->type);
+		tokens = tokens->next;
+	}
+	free(tokens);
+}
+
+void	init_minishell(t_shell *shell)
+{
+	t_token		*tokens;
+	t_parser	*parser;
+
+	while (1)
+	{
+		shell->prompt = readline("Arab Spring 🐣🐥 -> ");
+		if (shell->prompt)
+		{
+			add_history(shell->prompt);
+			tokens = tokenizer(shell);
+			parser = ft_calloc(1, sizeof(t_parser));
+			if (!parser)
+				exit(EXIT_FAILURE);
+			ft_parser(tokens, parser, shell);
+			// print_tokens(tokens);
+			ft_expander(shell, tokens);
+			// ft_executor(shell, tokens)
+			if (tokens && !ft_executor(shell, tokens))
+				execute(shell, tokens, parser);
+			free(parser);
+			if(shell->enviroment)
+			{
+				ft_free_2d(shell->enviroment);
+				shell->enviroment = NULL;
+			}
+			if (tokens)
+			{
+				free_tokenizer(tokens);
+				free(tokens);
+				tokens = NULL;
+			}
+		}
+		else
+		{
+			if (shell->env)
+			{
+				free_env(shell->env);
+				// free(shell->env);
+			}
+			// if (tokens)
+			// {
+			// 	free_tokenizer(tokens);
+			// 	free(tokens);
+			// 	tokens = NULL;
+			// }
+			free(shell);
+			exit(0);
+		}
+		if (tokens)
+		{
+			free_tokenizer(tokens);
+			free (tokens);
+			tokens= NULL;
+		}
 	}
 }
 
@@ -86,8 +194,6 @@ void	ft_executor(t_shell *shell, t_token *token)
 int	main(int argc, char **argv, char **env)
 {
 	t_shell		*shell;
-	t_token		*tokens;
-	t_parser	*parser;
 
 	(void)argv;
 	if (argc > 1)
@@ -98,28 +204,16 @@ int	main(int argc, char **argv, char **env)
 	shell = ft_calloc(1, sizeof(t_shell));
 	if (!shell)
 		exit(EXIT_FAILURE);
-	parser = ft_calloc(1, sizeof(t_parser));
-	if (!parser)
-		exit(EXIT_FAILURE);
 	env_copy(shell, env);
 	signal_handler();
-	while (1)
+	init_minishell(shell);
+	if (shell->env)
 	{
-		shell->prompt = readline("Arab Spring 🐣🐥 -> ");
-		if (shell->prompt)
-		{
-			add_history(shell->prompt);
-			tokens = tokenizer(shell);
-			ft_parser(tokens, parser, shell);
-			ft_expander(shell, tokens);
-			ft_executor(shell, tokens);
-			 print_tokens(tokens);
-		}
-		else
-			exit(EXIT_FAILURE);
+		free_env(shell->env);
+		free(shell->env);
 	}
+	free(shell->prompt);
 	free(shell);
 	rl_clear_history();
-	free(shell->prompt);
 	return (0);
 }
