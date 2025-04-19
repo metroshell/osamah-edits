@@ -18,6 +18,8 @@ static void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand, char
 
 	int count = 0;
 	expand->inner++;
+	if(token->content[expand->outer][expand->inner] == ' ' || token->content[expand->outer][expand->inner] == '\0')
+		temp[(*i)++] = '$';
 	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == '0')
 	{
 		char *digit = ft_strdup("bash");
@@ -58,6 +60,8 @@ int		content_len(t_shell *shell,t_token *token, t_expand *expand)
 
 	int count = 0;
 	expand->inner++;
+	if(token->content[expand->outer][expand->inner] == ' ' || token->content[expand->outer][expand->inner] == '\0')
+		count++;
 	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == '0')
 	{
 		expand->inner++;
@@ -114,6 +118,8 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 				expand->inner++;
 				size++;
 			}
+			size++;
+			expand->inner++;
 		}
 		else if(token->content[expand->outer][expand->inner] == '$')
 			size += content_len(shell,token,expand);
@@ -155,6 +161,7 @@ void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 			temp[i++] = token->content[expand->outer][expand->inner++];
 			while(token->content[expand->outer][expand->inner] && token->content[expand->outer][expand->inner] != '\'')
 				temp[i++] = token->content[expand->outer][expand->inner++];
+			temp[i++] = token->content[expand->outer][expand->inner++];
 		}
 		else if(token->content[expand->outer][expand->inner] == '$')
 			handle_dollar(shell,token,expand,temp,&i);

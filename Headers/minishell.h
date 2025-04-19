@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/14 16:36:22 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:07:25 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+#include <signal.h> 
 
 typedef struct s_env
 {
@@ -141,5 +142,8 @@ void 	scan_env(t_shell *shell, t_export *export);
 
 // unset command
 void	unset_command(t_shell *shell, t_token *token);
+
+// signal
+void signal_handler(void);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/14 15:56:59 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:07:35 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ int	main(int argc, char **argv, char **env)
 	if (!parser)
 		exit(EXIT_FAILURE);
 	env_copy(shell, env);
+	signal_handler();
 	while (1)
 	{
 		shell->prompt = readline("Arab Spring 🐣🐥 -> ");

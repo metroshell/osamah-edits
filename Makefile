@@ -6,7 +6,7 @@ LIBFT_DIR = libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = main.c \
+SRCS = main.c signals.c\
     ./built-in/environment/env.c ./built-in/environment/env_utils.c\
 	./tokenizer/tokenizer.c ./tokenizer/token_utils.c ./tokenizer/token_size.c ./tokenizer/prompt_check.c \
 	./parser/detect_type.c ./parser/parser.c \
