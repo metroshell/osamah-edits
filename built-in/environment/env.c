@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 21:31:16 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/01 03:01:46 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/24 19:16:49 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ void	copy_content(t_shell *shell, t_env *temp, char **env)
 
 	end = 0;
 	start = 0;
+	if(ft_strcmp(temp->variable,"SHELL") == 0)
+	{
+		temp->content = ft_strdup("ARSSH");
+		return;
+	}
 	while (env[shell->temp_index][start] != '='
 		&& env[shell->temp_index][start])
 		start++;
@@ -74,5 +79,6 @@ void	env_copy(t_shell *shell, char **env)
 		}
 		shell->temp_index++;
 	}
+	env_edit(shell);
 	shell->temp_index = 0;
 }

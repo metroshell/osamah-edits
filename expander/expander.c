@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 16:06:40 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/15 17:54:52 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/24 20:16:02 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ static void	process_token(t_shell *shell, t_token *token, t_expand *expand)
 		{
 			expand_dollar(shell, token, expand);
 			quote_remover(token, expand);
-			// if (token->content[expand->outer][0] != '\0')
-			// 	check_cmd(token, expand, shell->paths);
 		}
 		expand->outer++;
 	}

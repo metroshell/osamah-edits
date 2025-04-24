@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/19 18:05:31 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/04/24 19:06:55 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ void					env_copy(t_shell *shell, char **env);
 void					env_command(t_shell *shell);
 void					print_env(t_env *env);
 t_env					*create_env_node(void);
+void	env_edit(t_shell *shell);
 
 // echo command
 void					echo_command(t_shell *shell, t_token *token);

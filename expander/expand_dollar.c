@@ -22,7 +22,7 @@ static void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand, char
 		temp[(*i)++] = '$';
 	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == '0')
 	{
-		char *digit = ft_strdup("bash");
+		char *digit = ft_strdup("ARSSH");
 		expand->inner++;
 		while(digit[count])
 			temp[(*i)++] = digit[count++];

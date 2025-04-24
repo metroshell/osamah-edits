@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:33:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/05 15:00:17 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/24 18:04:58 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static char	**copy_env_to_array(t_env *env)
         if (current->variable)
         {
             if (current->content)
-                env_array[i] = ft_strjoin(current->variable, ft_strjoin("=", current->content));
+                env_array[i] = ft_strjoin(current->variable, ft_strjoin("=\"", current->content));
             else
                 env_array[i] = ft_strjoin(current->variable, "=");
             i++;
@@ -104,7 +104,7 @@ void	sorted_print(t_env *env)
     i = 0;
     while (env_array[i])
     {
-        printf("declare -x \"%s\"\n", env_array[i]);
+        printf("declare -x %s\"\n", env_array[i]);
         i++;
     }
     ft_free_2d(env_array);
