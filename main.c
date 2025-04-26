@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/19 18:04:53 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/04/26 15:15:54 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,17 @@ int	ft_executor(t_shell *shell, t_token *token)
 
 void	free_env(t_env *env)
 {
+	t_env	*temp;
+
 	while(env)
 	{
+		temp = env->next;
 		if (env->variable)
 			free(env->variable);
 		if (env->content)
 			free(env->content);
-		env = env->next;
+		free(env);
+		env = temp;
 	}
 	free(env);
 }

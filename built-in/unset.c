@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 21:54:42 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/13 19:14:22 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/26 15:56:05 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,6 @@ void	delete_node(t_shell *shell, t_export *export)
 
 void	unset_command(t_shell *shell, t_token *token)
 {
-	shell->temp_index = 1;
-	while (token->content[shell->temp_index])
-		shell->temp_index++;
 	t_export *export;
 	
 	export = ft_calloc(1,sizeof(t_export));
@@ -58,5 +55,7 @@ void	unset_command(t_shell *shell, t_token *token)
 		else if(export->flag == -1)
 			return ;
 		i++;
+        free(export->variable);
 	}
+    free(export);
 }

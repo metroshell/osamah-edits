@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/04/19 17:57:53 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/04/26 16:39:06 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,7 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 		ft_free_2d(shell->paths);
 		if (!cmd)
 		{
-			ft_printf("command not found\n");
+			ft_printf("command not found:%s\n", lst[0]);
 			if (lst)
 				ft_free_2d(lst);
 			free_tokenizer(tokens);

@@ -51,6 +51,8 @@ static void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand, char
 			}
 			current = current->next;
 		}
+		free(expand->variable);
+		expand->variable = NULL;
 	}
 }
 
@@ -62,31 +64,32 @@ int		content_len(t_shell *shell,t_token *token, t_expand *expand)
 	expand->inner++;
 	if(token->content[expand->outer][expand->inner] == ' ' || token->content[expand->outer][expand->inner] == '\0')
 		count++;
-	if(ft_isdigit(token->content[expand->outer][expand->inner]) && token->content[expand->outer][expand->inner] == '0')
+	else if(token->content[expand->outer][expand->inner] == '0')
 	{
 		expand->inner++;
-		count += 4;
+		count += 5;
 	}
 	else if(ft_isdigit(token->content[expand->outer][expand->inner]))
 		expand->inner++;
 	else
+	{
 		while(token->content[expand->outer][expand->inner] && (ft_isalpha(token->content[expand->outer][expand->inner]) || token->content[expand->outer][expand->inner] == '_'))
 		{
 			expand->inner++;
 			count++;
 		}
-	expand->variable = ft_substr(token->content[expand->outer],expand->inner - count,count);
-	printf("variable = %s\n",expand->variable);
-	current = shell->env;
-	while (current)
-	{
-		if (ft_strcmp(current->variable, expand->variable) == 0)
+		expand->variable = ft_substr(token->content[expand->outer],expand->inner - count,count);
+		current = shell->env;
+		while (current)
 		{
-			count = ft_strlen(current->content);
-			printf("count = %d\n",count);
-			return (count);
+			if (ft_strcmp(current->variable, expand->variable) == 0)
+			{
+				count = ft_strlen(current->content);
+				printf("count = %d\n",count);
+				return (count);
+			}
+			current = current->next;
 		}
-		current = current->next;
 	}
 	return (count - ft_strlen(expand->variable));
 }
@@ -95,7 +98,9 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 {
 	expand->inner = 0;
 	int size = 0;
-	while(token->content[expand->outer][expand->inner])
+	if (!token->content || !token->content[expand->outer])
+    	return (0);
+	while(expand->inner < (int)ft_strlen(token->content[expand->outer]) && token->content[expand->outer][expand->inner])
 	{
 		if(token->content[expand->outer][expand->inner] == '\"')
 		{
@@ -104,7 +109,11 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 			while(token->content[expand->outer][expand->inner] && token->content[expand->outer][expand->inner] != '\"')
 			{
 				if(token->content[expand->outer][expand->inner] == '$')
-					size += content_len(shell,token,expand);
+				{
+					size += content_len(shell,token,expand) - 1;
+					free(expand->variable);
+					expand->variable = NULL;
+				}
 				expand->inner++;
 				size++;
 			}
@@ -122,7 +131,11 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 			expand->inner++;
 		}
 		else if(token->content[expand->outer][expand->inner] == '$')
+		{
 			size += content_len(shell,token,expand);
+			free(expand->variable);
+			expand->variable = NULL;
+		}
 		else
 		{
 			expand->inner++;

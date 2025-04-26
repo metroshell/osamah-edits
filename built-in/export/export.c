@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:30:31 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/24 19:16:39 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/26 15:07:10 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,12 +113,9 @@ void	add_variable(t_shell *shell, t_export *export)
 
 void	export_command(t_shell *shell,t_token *token)
 {
-	shell->temp_index = 1;
-	while (token->content[shell->temp_index])
-		shell->temp_index++;
 	t_export *export;
 	
-	export = ft_calloc(1,sizeof(t_export));
+	export = malloc(sizeof(t_export));
 	if(!export)
 		return ;
 	if(token->content[1])
@@ -134,7 +131,6 @@ void	export_command(t_shell *shell,t_token *token)
 				if(!token->content[i])
 					break;
 			}
-			
 			while(token->content[i][export->index] && token->content[i][export->index] != '=' && token->content[i][export->index] != '+')
 				export->index++;
 			export->variable = ft_substr(token->content[i],0,export->index);
@@ -157,5 +153,6 @@ void	export_command(t_shell *shell,t_token *token)
 	}
 	else
 		sorted_print(shell->env);
+	free(export);
 
 }
