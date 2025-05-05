@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_quotes.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 05:58:19 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/15 18:57:13 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:36:15 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@ void	quote_remover(t_token *token, t_expand *expand)
 	int		i;
 	int count;
 
-	printf("quotes count = %d\n" ,count_quotes(token, expand));
-	temp = malloc(ft_strlen(token->content[expand->outer]) - count_quotes(token, expand) + 1);
+	int x = count_quotes(token, expand);
+	if(x == 0)
+		return;
+	temp = malloc(ft_strlen(token->content[expand->outer]) - x + 1);
 	if(!temp)
 		exit(123);
 	expand->inner = 0;

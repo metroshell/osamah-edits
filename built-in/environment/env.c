@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 21:31:16 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/26 15:14:17 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:19:26 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,6 @@ void	copy_content(t_shell *shell, t_env *temp, char **env)
 
 	end = 0;
 	start = 0;
-	if(ft_strcmp(temp->variable,"SHELL") == 0)
-	{
-		temp->content = ft_strdup("ARSSH");
-		return;
-	}
 	while (env[shell->temp_index][start] != '='
 		&& env[shell->temp_index][start])
 		start++;
@@ -63,6 +58,8 @@ void	env_copy(t_shell *shell, char **env)
 {
 	t_env	*temp;
 
+	if (env[0] == NULL)
+		return ;
 	shell->env = create_env_node();
 	if (!shell->env)
 		return ;

@@ -151,8 +151,12 @@ void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 {
 	char	*temp;
 	int		i;
+	int		x;
 
-	temp = malloc(count_length(shell,token,expand) + 1);
+	x = count_length(shell,token,expand);
+	if((int)ft_strlen(token->content[expand->outer]) == x)
+		return ;
+	temp = malloc(x + 1);
 	if(!temp)
 		exit(130);
 	i = 0;

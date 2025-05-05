@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 05:18:33 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/24 19:17:02 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:20:52 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ void	env_edit(t_shell *shell)
 			a++;
 			if(a > 999)
 			{
-				printf("arssh: warning: shell level (%d) too high, resetting to 1\n",a);
+				printf("arssh: warning: shell level (%d)", a);
+				printf("too high, resetting to 1\n");
 				a = 1;
 			}
 			char *temp = ft_itoa(a);

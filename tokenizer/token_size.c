@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/15 17:30:12 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:08:28 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,25 @@
 
 void	count_without_qoutes(t_shell *shell)
 {
-	while (shell->prompt[shell->temp_index] != '<'
+	while (shell->temp_index < (int)ft_strlen(shell->prompt)
 		&& shell->prompt[shell->temp_index] != '>'
 		&& shell->prompt[shell->temp_index] != '|'
 		&& shell->prompt[shell->temp_index] != ' '
-		&& shell->prompt[shell->temp_index])
+		&& shell->prompt[shell->temp_index] != '<')
 	{
+		// && shell->prompt[shell->temp_index]
 		if (shell->prompt[shell->temp_index] == '\'')
 		{
 			shell->temp_index++;
-			while (shell->prompt[shell->temp_index] != '\'')
+			while (shell->prompt[shell->temp_index] != '\''
+				&& shell->prompt[shell->temp_index])
 				shell->temp_index++;
 		}
 		else if (shell->prompt[shell->temp_index] == '\"')
 		{
 			shell->temp_index++;
-			while (shell->prompt[shell->temp_index] != '\"')
+			while (shell->prompt[shell->temp_index] != '\"'
+				&& shell->prompt[shell->temp_index])
 				shell->temp_index++;
 		}
 		shell->temp_index++;

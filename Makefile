@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Werror -Wextra -Wall -g -IHeaders 
+CFLAGS = -Werror -Wextra -Wall -g -IHeaders #-fsanitize=address
 
 LIBFT_DIR = libft
 
@@ -14,7 +14,7 @@ SRCS = main.c signals.c\
 	./built-in/echo/echo_command.c \
 	./built-in/export/export.c ./built-in/export/export_utils.c \
 	./built-in/unset.c ./built-in/cd.c ./built-in/pwd.c\
-	./execution/execution.c\
+	./execution/execution.c ./execution/HereDoc/heredoc.c ./execution/Handler.c\
 
 OBJS_DIR := objects
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

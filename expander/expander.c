@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 16:06:40 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/26 16:24:34 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:30:55 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ static void	process_token(t_shell *shell, t_token *token, t_expand *expand)
 		expand->single_qoute = 0;
 		if (token->type[expand->outer] == TEXT)
 			expand_dollar(shell, token, expand);
-		if(token->type[expand->outer] == TEXT || token->type[expand->outer] == FILENAME)
+		if(token->type[expand->outer] == TEXT
+			|| token->type[expand->outer] == FILENAME)
 			quote_remover(token, expand);
 		expand->outer++;
 	}
