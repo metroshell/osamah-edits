@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/05 15:21:51 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/06 17:38:35 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ typedef struct s_env
 	char				*content;
 	struct s_env		*next;
 }						t_env;
+
+typedef struct s_heredoc
+{
+	char	**heredocs;
+	char	**exit;
+}	t_heredoc;
 
 typedef struct s_fds
 {
@@ -191,6 +197,8 @@ int	is_there_redirect(t_token *tokens);
 char	*expand_heredoc(char *text, t_shell *shell);
 char *remove_qoutes(char *string, t_shell *shell);
 int	is_there_command(t_token *tokens);
-
+char **rearrange_list(t_token *tokens);
+int	redirect_first_arg(t_token *tokens);
+char	**rearrange_list_redirect(t_token *tokens);
 
 #endif

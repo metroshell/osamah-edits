@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/05 15:43:00 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:27:45 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	redirect_first_arg(t_token *tokens)
 	i = 0;
 	temp = tokens;
 	if (temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT
-		|| temp->type[i] == APPEND)
+		|| temp->type[i] == APPEND || temp->type[i] == HEREDOC )
 		return (1);
 	return (0);
 }

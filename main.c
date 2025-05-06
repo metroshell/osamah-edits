@@ -78,31 +78,31 @@ int	ft_executor(t_shell *shell, t_token *token)
 				&& token->content[1] == NULL)
 			{
 				print_env(shell->env);
-				return (1);	
+				return (1);
 			}
 			else if (ft_strcmp(token->content[0], "echo") == 0)
 			{
 				echo_command(shell, token);
 				return (1);
-			}	
+			}
 			else if (ft_strcmp(token->content[0], "export") == 0)
 			{
-				export_command(shell,token);
+				export_command(shell, token);
 				return (1);
 			}
-			else if(ft_strcmp(token->content[0], "unset") == 0)
+			else if (ft_strcmp(token->content[0], "unset") == 0)
 			{
-				unset_command(shell,token);
+				unset_command(shell, token);
 				return (1);
-			}	
-			else if(ft_strcmp(token->content[0], "pwd") == 0)
+			}
+			else if (ft_strcmp(token->content[0], "pwd") == 0)
 			{
 				ft_pwd();
 				return (1);
-			}	
-			else if(ft_strcmp(token->content[0], "cd") == 0)
+			}
+			else if (ft_strcmp(token->content[0], "cd") == 0)
 			{
-				ft_cd(shell,token);
+				ft_cd(shell, token);
 				return (1);
 			}
 		}
@@ -114,8 +114,8 @@ int	ft_executor(t_shell *shell, t_token *token)
 void	free_env(t_env *env)
 {
 	t_env	*tmp;
-	
-	while(env)
+
+	while (env)
 	{
 		tmp = env->next;
 		if (env->variable)
@@ -170,7 +170,7 @@ void	init_minishell(t_shell *shell)
 			if (!tokens)
 			{
 				free(shell->prompt);
-				continue;
+				continue ;
 			}
 			parser = ft_calloc(1, sizeof(t_parser));
 			if (!parser)
@@ -190,14 +190,13 @@ void	init_minishell(t_shell *shell)
 				free(parser);
 			if (tokens)
 				free_tokenizer(tokens);
-
 		}
 		else
 		{
 			// free(shell->prompt);
 			exit(0);
 		}
-		if(shell->enviroment)
+		if (shell->enviroment)
 		{
 			ft_free_2d(shell->enviroment);
 			shell->enviroment = NULL;
@@ -208,7 +207,7 @@ void	init_minishell(t_shell *shell)
 // take the arguments and the enviroment
 int	main(int argc, char **argv, char **envp)
 {
-	t_shell		*shell;
+	t_shell	*shell;
 
 	(void)argv;
 	// for (int i = 0; envp[i]; i++)
