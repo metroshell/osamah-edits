@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/06 18:07:34 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/07 16:59:34 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,17 @@ int counter(t_token *tokens)
     while(tmp->content[i])
     {
         if(tmp->type[i] == HEREDOC)
+        {
+            i++;
             count++;
-        if(tmp->type[i] == HEREDOC || tmp->type[i] == REDIRECTIN || tmp->type[i] == REDIRECTOUT || tmp->type[i] == APPEND )
-            i+=2;
-        if(!tmp->content[i])
-            break;
-        count++;
-        i++;
+        }
+        else if(tmp->type[i] == REDIRECTIN || tmp->type[i] == REDIRECTOUT || tmp->type[i] == APPEND  || tmp->type[i] == ENDOFFILE || tmp->type[i] == FILENAME )
+            i++;
+        else if (tmp->type[i] == COMMAND || tmp->type[i] == ARGUMENT || tmp->type[i] == TEXT )
+        {
+            count++;
+            i++;
+        }    
     }
     return (count);
 }
@@ -60,17 +64,16 @@ char	**list_redirect(t_token *tokens)
 	j = 0;
 	while (temp->content[i])
 	{
-		if (temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT
-			|| temp->type[i] == APPEND || temp->type[i] == HEREDOC)
-			i+=2;
-		else if (temp->content[i])
+		if(temp->type[i] == HEREDOC || temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT || temp->type[i] == APPEND  || temp->type[i] == ENDOFFILE || temp->type[i] == FILENAME )
+            i++;
+		else if (temp->type[i] == COMMAND || temp->type[i] == ARGUMENT || temp->type[i] == TEXT )
 		{
 			lst[j] = ft_strdup(temp->content[i]);
 			if (!lst[j])
 				printf("hello\n");
-			i++;
-			j++;
-		}
+                i++;
+                j++;
+        }
 	}
 	lst[j] = NULL;
 	return (lst);
@@ -91,15 +94,16 @@ char **copy_command_line(t_token *tokens)
 		return (NULL);
 	while (temp->content[i])
 	{
-        if(temp->type[i] == HEREDOC || temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT || temp->type[i] == APPEND )
-            i+=2;
-        if(!temp->content[i])
-            break;
-		list[j] = ft_strdup(temp->content[i]);
-		if (!list[j])
-			printf("hello\n");
-        j++;
-		i++;
+        if(temp->type[i] == HEREDOC || temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT || temp->type[i] == APPEND  || temp->type[i] == ENDOFFILE || temp->type[i] == FILENAME )
+            i++;
+        else if (temp->type[i] == COMMAND || temp->type[i] == ARGUMENT || temp->type[i] == TEXT )
+		{
+            list[j] = ft_strdup(temp->content[i]);
+            if (!list[j])
+                printf("hello\n");
+            j++;
+            i++;
+        }
 	}
 	list[j] = NULL;
 	return (list);
@@ -113,6 +117,10 @@ char **list(t_token *tokens)
 		list = list_redirect(tokens);
 	else
 		list = copy_command_line(tokens);
+    for(int i = 0;list[i] ; i++)
+    {   
+        fprintf(stderr,"%d:%s\n",i,list[i]);
+    }   
 	return (list);
 }
 
