@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/07 16:59:34 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/11 20:29:55 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ int counter(t_token *tokens)
             i++;
         }    
     }
+    if(is_there_command(tmp) && is_there_heredoc(tmp))
+    {
+        count++;   
+    }
     return (count);
 }
 
@@ -75,6 +79,10 @@ char	**list_redirect(t_token *tokens)
                 j++;
         }
 	}
+    if(is_there_command(temp) && is_there_heredoc(temp))
+    {
+        lst[j++] = ft_strdup(".tmp");
+    }
 	lst[j] = NULL;
 	return (lst);
 }
@@ -105,6 +113,10 @@ char **copy_command_line(t_token *tokens)
             i++;
         }
 	}
+    if(is_there_command(temp) && is_there_heredoc(temp))
+    {
+        list[j++] = ft_strdup(".tmp");
+    }
 	list[j] = NULL;
 	return (list);
 }
@@ -139,60 +151,49 @@ int     count_heredoc(t_token *tokens)
     return(counter);
 }
 
-void    open_heredocs(t_heredoc *heredoc,t_shell *shell)
+int    open_heredocs(t_shell *shell,char *exit)
 {
-    int i = 0;
-    while(heredoc->exit[i])
+    char *text = NULL;
+    if (exit[0] == '\'' || exit[0] == '\"')
+        exit = remove_qoutes(exit,shell);
+    int fd = open(".tmp", O_CREAT | O_RDWR | O_TRUNC, 0644);
+    while (1)
     {
-        char *text = NULL;
-        if (heredoc->exit[i][0] == '\'' || heredoc->exit[i][0] == '\"')
-            heredoc->exit[i] = remove_qoutes(heredoc->exit[i],shell);
-        int fd = open(".tmp", O_CREAT | O_RDWR | O_TRUNC, 0644);
-        fprintf(stderr,"1\n");
-        while (1)
+        text = readline(">");
+        if(shell->expand_flag)
+            text = expand_heredoc(text, shell);
+        if (text && exit && !ft_strcmp(text, exit))
         {
-            text = readline(">");
-            if(shell->expand_flag)
-                text = expand_heredoc(text, shell);
-            if (text && heredoc->exit[i] && !ft_strcmp(text, heredoc->exit[i]))
-            {
-                free(text);
-                text = NULL;
-                break;
-            }
-            write(fd, text, ft_strlen(text));
-            write(fd, "\n", 1);
             free(text);
+            text = NULL;
+            break;
         }
-        dup2(fd,STDIN_FILENO);
-        close(fd);
-        i++; 
+        write(fd, text, ft_strlen(text));
+        write(fd, "\n", 1);
+        free(text);
     }
+    free(exit);
+    return (fd);
 }
 
-void    is_there_heredoc(t_token *tokens , t_shell *shell)
-{
+void    heredoc_handle(t_token *tokens , t_shell *shell)
+{   
     t_token *temp = tokens;
-    t_heredoc *heredoc = malloc(sizeof(t_heredoc));
-    
-    heredoc->heredocs = malloc((count_heredoc(tokens) + 1)* sizeof(char *));
-    heredoc->exit = malloc((count_heredoc(tokens) + 1)* sizeof(char *));
     int i = 0;
-    int index = 0;
+    int fd = 0;
     while(temp->content[i])
     {
         if(temp->type[i] == HEREDOC)
         {
-            heredoc->heredocs[index] = ft_strdup(temp->content[i]);
-            i++;
-            heredoc->exit[index] = ft_strdup(temp->content[i]);
-            index++;
+            char *exit = ft_strdup(temp->content[i+1]);
+            if(fd)
+                close(fd);
+            fd = open_heredocs(shell,exit);
         }
         i++;
     }
-    heredoc->heredocs[index] = NULL;
-    heredoc->exit[index] = NULL;
-    open_heredocs(heredoc,shell);
+    if(fd)
+        close(fd);
 }
 
 int is_there_redirectin(t_token *tokens)
@@ -231,8 +232,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     int pids[pipes_count + 1];               // Number of commands = pipes_count + 1
     int pipes[pipes_count][2];               // Number of pipes = pipes_count
     int i = 0;
-    int heredoc_flag = 0;
-
+    
     // Create pipes
     while (i < pipes_count) 
     {
@@ -247,7 +247,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     // Create child processes for each command
     while (i < pipes_count + 1) 
     {
-        is_there_heredoc(tokens,shell);
+        heredoc_handle(tokens,shell);
         pids[i] = fork();
         if (pids[i] == -1) 
         {
@@ -257,7 +257,6 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
         if (pids[i] == 0) 
         {
             // Child process
-            heredoc_flag = 0;
             shell->cmd_list = list(tokens);
             get_paths(shell);
             if (!shell->paths) 
@@ -302,13 +301,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                     exit_execution(shell, tokens, parser);
                     exit(EXIT_FAILURE);
                 }
-            } 
-            // else 
-            // {
-            //     exit_execution(shell, tokens, parser);
-            //     exit(0);
-            // }
-            
+            }
             // Close unused pipe ends in the child process
             j = 0;
             while (j < pipes_count) {
@@ -326,6 +319,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 if(is_there_redirect(tokens))
                 {
                     dup2(pipes[i][1],STDOUT_FILENO);
+                    close(pipes[i][1]);
                     int x = 0;
                     int count_rout = 0;
                     int count_rin = 0;
@@ -356,7 +350,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_append == 1)
+                            {
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
+                                close(pipes[i - 1][0]); 
+                            }
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -371,7 +368,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_rin == 1 && !is_there_redirectout(tokens))
+                            {
                                 dup2(pipes[i][1], STDOUT_FILENO);
+                                close(pipes[i][1]);   
+                            }
                             dup2(file_fd, STDIN_FILENO);
                             close(file_fd);
                         }
@@ -381,6 +381,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 else
                 {
                     dup2(pipes[i][1], STDOUT_FILENO);
+                    close(pipes[i][1]);
                 }
             }
             else if (i == pipes_count)
@@ -388,6 +389,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 if(is_there_redirect(tokens))
                 {
                     dup2(pipes[i][1],STDOUT_FILENO);
+                    close(pipes[i][1]);
                     int x = 0;
                     int count_rout = 0;
                     int count_rin = 0;
@@ -405,7 +407,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_rout == 1 && !is_there_redirectin(tokens))
+                            {
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
+                                close(pipes[i - 1][0]); 
+                            }
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -420,7 +425,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_append == 1)
+                            {
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
+                                close(pipes[i - 1][0]); 
+                            }
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -443,8 +451,12 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 else
                 {
                     dup2(pipes[i - 1][0], STDIN_FILENO);
+                    close(pipes[i - 1][0]); 
                     if (i != pipes_count)
+                    {
                         dup2(pipes[i][1], STDOUT_FILENO);
+                        close(pipes[i][1]); 
+                    }
                 }
             }
             else
@@ -452,6 +464,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 if(is_there_redirect(tokens))
                 {
                     dup2(pipes[i][1],STDOUT_FILENO);
+                    close(pipes[i][1]); 
                     int x = 0;
                     int count_rout = 0;
                     int count_rin = 0;
@@ -469,7 +482,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_rout == 1 && !is_there_redirectin(tokens))
+                            {
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
+                                close(pipes[i - 1][0]); 
+                            }
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -484,7 +500,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_append == 1)
+                            {
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
+                                close(pipes[i - 1][0]); 
+                            }
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -499,7 +518,10 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 exit(EXIT_FAILURE);
                             }
                             if(count_rin == 1 && !is_there_redirectout(tokens))
+                            {
                                 dup2(pipes[i][1], STDOUT_FILENO);
+                                close(pipes[i][1]); 
+                            }
                             dup2(file_fd, STDIN_FILENO);
                             close(file_fd);
                         }
@@ -509,8 +531,12 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 else
                 {
                     dup2(pipes[i - 1][0], STDIN_FILENO);
+                    close(pipes[i - 1][0]); 
                     if (i != pipes_count)
+                    {
                         dup2(pipes[i][1], STDOUT_FILENO);
+                        close(pipes[i][1]);
+                    }
                 }
             }
             if(is_there_command(tokens))
@@ -529,7 +555,6 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
         close(pipes[j][1]);
         j++;
     }
-
     // Wait for all child processes
     i = 0;
     while (i < pipes_count + 1) 
@@ -537,5 +562,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
         wait(NULL);
         i++;
     }
+    if(!access(".tmp",W_OK | R_OK))
+        unlink(".tmp");
     return;
 }

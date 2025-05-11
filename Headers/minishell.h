@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/06 17:38:35 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/11 19:31:10 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,5 +200,6 @@ int	is_there_command(t_token *tokens);
 char **rearrange_list(t_token *tokens);
 int	redirect_first_arg(t_token *tokens);
 char	**rearrange_list_redirect(t_token *tokens);
+int	is_there_heredoc(t_token *tokens);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/06 15:27:45 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/11 19:27:41 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,22 @@ int	is_there_command(t_token *tokens)
 	while (temp->content[i])
 	{
 		if (temp->type[i] == COMMAND)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_there_heredoc(t_token *tokens)
+{
+	t_token	*temp;
+	int			i;
+
+	temp = tokens;
+	i = 0;
+	while (temp->content[i])
+	{
+		if (temp->type[i] == HEREDOC)
 			return (1);
 		i++;
 	}
