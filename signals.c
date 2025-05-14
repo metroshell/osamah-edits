@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:32:18 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/14 18:43:36 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:02:14 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	sig(int signum)
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
 	rl_redisplay();
-	g_exit_status = SIGINT;
+	g_exit_status = 128 + SIGINT;
 }
 
 void	signal_handler(void)

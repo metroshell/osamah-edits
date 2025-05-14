@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 18:03:59 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:21:58 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <signal.h> 
 # include <sys/types.h>
 # include <dirent.h>
+
+extern int g_exit_status;
 
 typedef struct s_env
 {

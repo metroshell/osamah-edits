@@ -6,11 +6,13 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/14 18:44:31 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:49:20 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Headers/minishell.h"
+
+extern int g_exit_status;
 
 int	how_many_pipes(t_token *tokens)
 {
@@ -194,10 +196,14 @@ char **rearrange_list(t_token *tokens)
 		return (NULL);
 	while (temp->content[i])
 	{
-		list[i] = ft_strdup(temp->content[i]);
+		if (temp->content[i])
+    		list[i] = ft_strdup(temp->content[i]);
+		else
+    		list[i] = NULL;
 		if (!list[i])
 		{
-			printf("hello\n");
+			printf("Error: Failed to duplicate string at index %d\n", i);
+			break;
 		}
 		i++;
 	}
@@ -402,6 +408,8 @@ char	**create_list(t_token *tokens, t_fds *fd, t_shell *shell)
 	char	**lst;
 	char	**redirect_lst;
 	
+	if (!tokens || !tokens->content)
+    	return (NULL);
 	if (redirect_first_arg(tokens))// <in ls after rearrange_list_redirect ls <in
 		lst = rearrange_list_redirect(tokens);
 	else
@@ -441,9 +449,21 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 	shell->cmd_list = create_list(tokens, fd, shell);
 	if (!shell->cmd_list)
 		return ;
+	if(fd->saved_out)
+		shell->fd_out = fd->saved_out;
+	if(ft_executor(shell,tokens))
+	{
+		if(shell->fd_out)
+			close(shell->fd_out);
+		free(fd);
+		ft_free_2d(shell->cmd_list);
+		// exit_execution(shell,tokens,parser);
+		return ;
+	}
 	id = fork();
 	if (id == 0)
 	{
+		g_exit_status = 0;
 		j = 0;
 		if (fd->flag_heredoc)
 		{
@@ -473,8 +493,9 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 			free(temp);
 			write(2, string, ft_strlen(string));
 			free(string);
-			exit_execution(shell,tokens,parser);
 			free(fd);
+			exit_execution(shell,tokens,parser);
+			exit(127);
 		}
 		if (!shell->enviroment)
 			shell->enviroment = get_env(shell->env);
@@ -509,7 +530,7 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 				free(string);
 				exit_execution(shell,tokens,parser);
 				free(fd);
-				exit(EXIT_FAILURE);
+				exit(127);
 			}
 		}
 		else
@@ -520,7 +541,14 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 		}
 		execve(cmd, shell->cmd_list, shell->enviroment);
 	}
-	wait(NULL);
+	int status;
+	waitpid(id, &status, 0);
+    if (WIFEXITED(status))
+        g_exit_status = WEXITSTATUS(status);
+    else if (WIFSIGNALED(status))
+	{
+	   g_exit_status = 128 + WTERMSIG(status);
+	}
 	if (fd->flag_out)
 	{
 		dup2(fd->saved_out, STDOUT_FILENO);

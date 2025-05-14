@@ -6,13 +6,13 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 18:38:39 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/14 23:47:56 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int g_exit_status = 0;
+extern int g_exit_status;
 
 void exit_execution(t_shell *shell, t_token *tokens, t_parser *parser)
 {
@@ -24,9 +24,10 @@ void exit_execution(t_shell *shell, t_token *tokens, t_parser *parser)
 		free_env(shell->env);
 	if (shell->cmd_list)
 		ft_free_2d(shell->cmd_list);
-	free(shell);
-	free(parser);
-	exit(EXIT_FAILURE);
+    if(shell)
+	    free(shell);
+	if(parser)
+        free(parser);
 }
 int counter(t_token *tokens)
 {
@@ -258,6 +259,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
         }
         if (pids[i] == 0) 
         {
+            g_exit_status = 0;
             shell->fd_out = 2;
             // Child process
             shell->cmd_list = list(tokens);
@@ -529,6 +531,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                         write(2, string, ft_strlen(string));
                         free(string);
                         exit_execution(shell, tokens, parser);
+                        exit(127);
                     }
                     if (!shell->enviroment)
                         shell->enviroment = get_env(shell->env);
@@ -574,7 +577,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
 			        			j++;
 			        		}
                             exit_execution(shell, tokens, parser);
-                            exit(EXIT_FAILURE);
+                            exit(127);
                         }
                     }
                     execve(cmd, shell->cmd_list, shell->enviroment);
