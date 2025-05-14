@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 02:45:52 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 16:44:48 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/14 19:23:33 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ void	echo_command(t_shell *shell, t_token *token)
 	{
 		if (shell->cmd_list[shell->temp_index])
 		{
-			ft_putstr_fd(shell->cmd_list[shell->temp_index],shell->fd_out);
+			write(shell->fd_out,shell->cmd_list[shell->temp_index],ft_strlen(shell->cmd_list[shell->temp_index]));
 			if (shell->cmd_list[shell->temp_index + 1])
-				ft_putstr_fd(" ",shell->fd_out);
+				write(shell->fd_out," ",1);
 		}
 		shell->temp_index++;
 	}
 	if (shell->echo_flag != 1)
-		ft_putstr_fd("\n",shell->fd_out);
+		write(shell->fd_out,"\n",1);
 }

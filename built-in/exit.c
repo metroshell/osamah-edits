@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:34:44 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 18:26:12 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/14 19:21:23 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void    ft_exit(t_token *token , t_shell *shell)
             free(temp);
             temp = ft_strjoin(tmp,": numeric argument required\n");
             free(tmp);
-            ft_putstr_fd(temp,2);
+            write(2,temp,ft_strlen(temp));
             free(temp);
             free_shell(shell);
             free_tokenizer(token);
