@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 01:06:20 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/14 18:43:14 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	ft_executor(t_shell *shell, t_token *token)
 			if (ft_strcmp(token->content[0], "env") == 0
 				&& token->content[1] == NULL)
 			{
-				print_env(shell->env);
+				print_env(shell,shell->env);
 				return (1);
 			}
 			else if (ft_strcmp(token->content[0], "echo") == 0)
@@ -105,44 +105,15 @@ int	ft_executor(t_shell *shell, t_token *token)
 				ft_cd(shell, token);
 				return (1);
 			}
+			else if (ft_strcmp(token->content[0], "exit") == 0)
+			{
+				ft_exit(token,shell);
+				return (1);
+			}
 		}
 		token = token->next;
 	}
 	return (0);
-}
-
-void	free_env(t_env *env)
-{
-	t_env	*tmp;
-
-	while (env)
-	{
-		tmp = env->next;
-		if (env->variable)
-			free(env->variable);
-		if (env->content)
-			free(env->content);
-		free(env);
-		env = tmp;
-	}
-	free(env);
-}
-
-void	free_tokenizer(t_token *tokens)
-{
-	t_token	*temp;
-
-	while (tokens)
-	{
-		temp = tokens->next;
-		if (tokens->content)
-			ft_free_2d(tokens->content);
-		if (tokens->type)
-			free(tokens->type);
-		free(tokens);
-		tokens = temp;
-	}
-	free(tokens);
 }
 
 void	init_minishell(t_shell *shell)
@@ -182,7 +153,7 @@ void	init_minishell(t_shell *shell)
 			}
 			// print_tokens(tokens);
 			// ft_executor(shell, tokens);
-			if (tokens && !ft_executor(shell, tokens))
+			if (tokens)
 				execute(shell, tokens, parser);
 			if (shell->prompt)
 				free(shell->prompt);

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 00:29:09 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/14 18:38:39 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+extern int g_exit_status = 0;
 
 void exit_execution(t_shell *shell, t_token *tokens, t_parser *parser)
 {
@@ -256,65 +258,9 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
         }
         if (pids[i] == 0) 
         {
+            shell->fd_out = 2;
             // Child process
             shell->cmd_list = list(tokens);
-            get_paths(shell);
-            if (!shell->paths)
-            {
-                char *temp = ft_strjoin("command not found: ",shell->cmd_list[0]);
-                char *string = ft_strjoin(temp,"\n");
-                free(temp);
-                write(2, string, ft_strlen(string));
-                free(string);
-                exit_execution(shell, tokens, parser);
-            }
-            if (!shell->enviroment)
-                shell->enviroment = get_env(shell->env);
-            if (shell->cmd_list[0] && (shell->cmd_list[0][0] == '.' || shell->cmd_list[0][0] == '/')) 
-            {
-                if (!access(shell->cmd_list[0], X_OK))
-                    cmd = ft_strdup(shell->cmd_list[0]);
-            } 
-            else if (shell->cmd_list[0]) 
-            {
-                j = 0;
-                while (shell->paths && shell->paths[j]) 
-                {
-                    cmd = ft_strjoin(shell->paths[j], shell->cmd_list[0]);
-                    if (!cmd)
-                        exit(EXIT_FAILURE);
-                    if (!access(cmd, X_OK)) 
-                        break;
-                    free(cmd);
-                    cmd = NULL;
-                    j++;
-                }
-                if (shell->paths)
-                    ft_free_2d(shell->paths);
-                if (!cmd)
-				{
-                    char *temp = ft_strjoin("command not found: ",shell->cmd_list[0]);
-                    char *string = ft_strjoin(temp,"\n");
-                    free(temp);
-                    write(2, string, ft_strlen(string));
-                    free(string);
-					j = 0;
-					while (j < pipes_count)
-					{
-						if (i != j + 1)
-						{
-							close(pipes[j][0]);
-						}
-						if (i != j)
-						{
-							close(pipes[j][1]);
-						}
-						j++;
-					}
-                    exit_execution(shell, tokens, parser);
-                    exit(EXIT_FAILURE);
-                }
-            }
             // Close unused pipe ends in the child process
             j = 0;
             while (j < pipes_count)
@@ -334,6 +280,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
             {
                 if(is_there_redirect(tokens))
                 {
+                    shell->fd_out = dup(pipes[i][1]);
                     dup2(pipes[i][1],STDOUT_FILENO);
                     close(pipes[i][1]);
                     int x = 0;
@@ -352,6 +299,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 close(file_fd);
                                 exit(EXIT_FAILURE);
                             }
+                            shell->fd_out = dup(file_fd);
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -365,11 +313,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 close(file_fd);
                                 exit(EXIT_FAILURE);
                             }
-                            if(count_append == 1)
-                            {
-                                dup2(pipes[i - 1][0],STDIN_FILENO);
-                                close(pipes[i - 1][0]); 
-                            }
+                            shell->fd_out = dup(file_fd);
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -385,6 +329,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                             }
                             if(count_rin == 1 && !is_there_redirectout(tokens))
                             {
+                                shell->fd_out = dup(pipes[i][1]);
                                 dup2(pipes[i][1], STDOUT_FILENO);
                                 close(pipes[i][1]);   
                             }
@@ -396,6 +341,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                 }
                 else
                 {
+                    shell->fd_out = dup(pipes[i][1]);
                     dup2(pipes[i][1], STDOUT_FILENO);
                     close(pipes[i][1]);
                 }
@@ -404,8 +350,6 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
             {
                 if(is_there_redirect(tokens))
                 {
-                    // dup2(pipes[i][1],STDOUT_FILENO);
-                    // close(pipes[i][1]);
                     int x = 0;
                     int count_rout = 0;
                     int count_rin = 0;
@@ -427,6 +371,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
                                 close(pipes[i - 1][0]); 
                             }
+                            shell->fd_out = dup(file_fd);
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -445,6 +390,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 dup2(pipes[i - 1][0],STDIN_FILENO);
                                 close(pipes[i - 1][0]); 
                             }
+                            shell->fd_out = dup(file_fd);
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -471,6 +417,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                     close(pipes[i - 1][0]); 
                     if (i != pipes_count)
                     {
+                        shell->fd_out = dup(pipes[i][1]);
                         dup2(pipes[i][1], STDOUT_FILENO);
                         close(pipes[i][1]);
                     }
@@ -480,6 +427,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
             {
                 if(is_there_redirect(tokens))
                 {
+                    shell->fd_out = dup(pipes[i][1]);
                     dup2(pipes[i][1], STDOUT_FILENO);
                     close(pipes[i][1]);
                     int x = 0;
@@ -503,6 +451,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 dup2(pipes[i - 1][0], STDIN_FILENO);
                                 close(pipes[i - 1][0]);
                             }
+                            shell->fd_out = dup(file_fd);
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -521,6 +470,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                                 dup2(pipes[i - 1][0], STDIN_FILENO);
                                 close(pipes[i - 1][0]);
                             }
+                            shell->fd_out = dup(file_fd);
                             dup2(file_fd, STDOUT_FILENO);
                             close(file_fd);
                         }
@@ -537,6 +487,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                             if(count_rin == 1 && !is_there_redirectout(tokens))
                             {
 								fprintf(stderr ,"hello qais\n");
+                                shell->fd_out = dup(pipes[i][1]);
                                 dup2(pipes[i][1], STDOUT_FILENO);
                                 close(pipes[i][1]);
 								close(pipes[i - 1][0]);
@@ -553,13 +504,82 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
                     close(pipes[i - 1][0]);
                     if (i != pipes_count)
                     {
+                        shell->fd_out = dup(pipes[i][1]);
                         dup2(pipes[i][1], STDOUT_FILENO);
                         close(pipes[i][1]);
                     }
                 }
             }
             if(is_there_command(tokens))
-                execve(cmd, shell->cmd_list, shell->enviroment);
+            {
+                if(ft_executor(shell,tokens))
+                {
+                    if(shell->fd_out)
+		                close(shell->fd_out);
+                    exit(0);
+                }
+                else
+                {
+                    get_paths(shell);
+                    if (!shell->paths)
+                    {
+                        char *temp = ft_strjoin("command not found: ",shell->cmd_list[0]);
+                        char *string = ft_strjoin(temp,"\n");
+                        free(temp);
+                        write(2, string, ft_strlen(string));
+                        free(string);
+                        exit_execution(shell, tokens, parser);
+                    }
+                    if (!shell->enviroment)
+                        shell->enviroment = get_env(shell->env);
+                    if (shell->cmd_list[0] && (shell->cmd_list[0][0] == '.' || shell->cmd_list[0][0] == '/')) 
+                    {
+                        if (!access(shell->cmd_list[0], X_OK))
+                            cmd = ft_strdup(shell->cmd_list[0]);
+                    } 
+                    else if (shell->cmd_list[0]) 
+                    {
+                        j = 0;
+                        while (shell->paths && shell->paths[j]) 
+                        {
+                            cmd = ft_strjoin(shell->paths[j], shell->cmd_list[0]);
+                            if (!cmd)
+                                exit(EXIT_FAILURE);
+                            if (!access(cmd, X_OK)) 
+                                break;
+                            free(cmd);
+                            cmd = NULL;
+                            j++;
+                        }
+                        if (shell->paths)
+                            ft_free_2d(shell->paths);
+                        if (!cmd)
+			        	{
+                            char *temp = ft_strjoin("command not found: ",shell->cmd_list[0]);
+                            char *string = ft_strjoin(temp,"\n");
+                            free(temp);
+                            write(2, string, ft_strlen(string));
+                            free(string);
+			        		j = 0;
+			        		while (j < pipes_count)
+			        		{
+			        			if (i != j + 1)
+			        			{
+			        				close(pipes[j][0]);
+			        			}
+			        			if (i != j)
+			        			{
+			        				close(pipes[j][1]);
+			        			}
+			        			j++;
+			        		}
+                            exit_execution(shell, tokens, parser);
+                            exit(EXIT_FAILURE);
+                        }
+                    }
+                    execve(cmd, shell->cmd_list, shell->enviroment);
+                }
+            }
             exit(1);
         }
         tokens = tokens->next;
@@ -576,10 +596,20 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     }
     // Wait for all child processes
     i = 0;
-    while (i < pipes_count + 1) 
+    int status;
+    pid_t last_pid = pids[pipes_count];
+    while (i < pipes_count + 1)
     {
-        wait(NULL);
-        i++;
+    	pids[i] = wait(&status);
+    
+    	if (pids[i] == last_pid)
+    	{
+    		if (WIFEXITED(status))
+    			g_exit_status = WEXITSTATUS(status);
+    		else if (WIFSIGNALED(status))
+    			g_exit_status = 128 + WTERMSIG(status);
+    	}
+    	i++;
     }
     if(!access(".tmp",W_OK | R_OK))
         unlink(".tmp");

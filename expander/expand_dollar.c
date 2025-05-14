@@ -155,6 +155,19 @@ int		count_length(t_shell *shell,t_token *token, t_expand *expand)
 	return (size);
 }
 
+int count_dollar(t_token *token,t_expand *expand)
+{
+	int count = 0;
+	int i = 0;
+	while(token->content[expand->outer][i])
+	{
+		if(token->content[expand->outer][i] == '$')
+			count++;
+		i++;
+	}
+	return(count);
+}
+
 void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 {
 	char	*temp;
@@ -164,7 +177,7 @@ void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 	x = count_length(shell,token,expand);
 	if((int)ft_strlen(token->content[expand->outer]) == x)
 		return ;
-	temp = malloc(x + 2);
+	temp = malloc(x + count_dollar(token,expand));
 	if(!temp)
 		exit(130);
 	i = 0;
@@ -204,7 +217,7 @@ void	expand_dollar(t_shell *shell,t_token *token, t_expand *expand)
 				expand->variable = NULL;
 			}
 		}
-		else
+		else if(token->content[expand->outer][expand->inner])
 			temp[i++] = token->content[expand->outer][expand->inner++];
 	}
 	temp[i] = '\0';
