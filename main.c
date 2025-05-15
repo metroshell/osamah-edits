@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 23:59:15 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/15 18:08:17 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ void	init_minishell(t_shell *shell)
 				ft_parser(tokens, parser, shell);
 				ft_expander(shell, tokens);
 			}
-			// print_tokens(tokens);
+			print_tokens(tokens);
 			// ft_executor(shell, tokens);
 			if (tokens)
 				execute(shell, tokens, parser);

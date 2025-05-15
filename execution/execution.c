@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/14 23:49:20 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/15 19:51:22 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -579,8 +579,6 @@ void	execute(t_shell *shell, t_token *tokens, t_parser *parser)
 	(void)shell;
 	if (!tokens->content)
 		return ;
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
 	if (how_many_pipes(tokens) > 0)
 	{
 		printf("there is pipes : %i\n", how_many_pipes(tokens));

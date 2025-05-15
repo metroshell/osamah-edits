@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 23:47:56 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/15 19:47:39 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ char	**list_redirect(t_token *tokens)
 	}
     if(is_there_command(temp) && is_there_heredoc(temp))
     {
-        lst[j++] = ft_strdup(".tmp");
+		if(temp->heredoc_file)
+        	lst[j++] = ft_strdup(temp->heredoc_file);
     }
 	lst[j] = NULL;
 	return (lst);
@@ -118,7 +119,8 @@ char **copy_command_line(t_token *tokens)
 	}
     if(is_there_command(temp) && is_there_heredoc(temp))
     {
-        list[j++] = ft_strdup(".tmp");
+		if(temp->heredoc_file)
+        	list[j++] = ft_strdup(temp->heredoc_file);
     }
 	list[j] = NULL;
 	return (list);
@@ -127,15 +129,15 @@ char **copy_command_line(t_token *tokens)
 char **list(t_token *tokens)
 {
     char	**list;
-    
+
     if (redirect_first_arg(tokens))
 		list = list_redirect(tokens);
 	else
 		list = copy_command_line(tokens);
-    for(int i = 0;list[i] ; i++)
-    {   
-        fprintf(stderr,"%d:%s\n",i,list[i]);
-    }   
+    // for(int i = 0;list[i] ; i++)
+    // {   
+    //     fprintf(stderr,"%d:%s\n",i,list[i]);
+    // }   
 	return (list);
 }
 
@@ -154,12 +156,12 @@ int     count_heredoc(t_token *tokens)
     return(counter);
 }
 
-int    open_heredocs(t_shell *shell,char *exit)
+int    open_heredocs(t_shell *shell,char *exit, char *file)
 {
     char *text = NULL;
     if (exit[0] == '\'' || exit[0] == '\"')
         exit = remove_qoutes(exit,shell);
-    int fd = open(".tmp", O_CREAT | O_RDWR | O_TRUNC, 0644);
+    int fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
     while (1)
     {
         text = readline(">");
@@ -191,7 +193,7 @@ void    heredoc_handle(t_token *tokens , t_shell *shell)
             char *exit = ft_strdup(temp->content[i+1]);
             if(fd)
                 close(fd);
-            fd = open_heredocs(shell, exit);
+            fd = open_heredocs(shell, exit, temp->heredoc_file);
         }
         i++;
     }
@@ -227,6 +229,33 @@ int is_there_redirectout(t_token *tokens)
     return (0);
 }
 
+int	create_heredoc_files(t_token *tokens)
+{
+	t_token	*temp;
+	int		i;
+	int		count;
+
+	temp = tokens;
+	i = 0;
+	count = 1;
+	while (temp)
+	{
+		i = 0;
+		while (temp->content[i])
+		{
+			if (temp->type[i] == HEREDOC)
+			{
+				temp->heredoc_file = ft_strjoin(".temp", ft_itoa(count));
+				count++;
+				break ;
+			}
+			i++;
+		}
+		temp = temp->next;
+	}
+	return (count);
+}
+
 void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
 {
     char *cmd;
@@ -248,6 +277,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     }
     i = 0;
     // Create child processes for each command
+    create_heredoc_files(tokens);
     while (i < pipes_count + 1) 
     {
         heredoc_handle(tokens,shell);
@@ -614,7 +644,5 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     	}
     	i++;
     }
-    if(!access(".tmp",W_OK | R_OK))
-        unlink(".tmp");
     return;
 }
