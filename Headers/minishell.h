@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/15 19:42:20 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/16 23:20:05 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ typedef struct s_shell
 	int				quote_counter;
 	int				expand_flag;
 	int				fd_out;
+	int				exit_status;
 	t_env			*env;
 }					t_shell;
 

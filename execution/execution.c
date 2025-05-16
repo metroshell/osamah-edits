@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/15 19:51:22 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/16 23:04:00 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -426,7 +426,6 @@ char	**create_list(t_token *tokens, t_fds *fd, t_shell *shell)
 			if (fd->saved_out)
 				close (fd->saved_out);
 			free(fd);
-			printf("hello world\n");
 			return (NULL);
 		}
 		return (redirect_lst);

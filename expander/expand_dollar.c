@@ -26,7 +26,7 @@ static void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand, char
 	else if(token->content[expand->outer][expand->inner] == '?')
 	{
 		char *tmp = NULL;
-		tmp = ft_itoa(g_exit_status);
+		tmp = ft_itoa(shell->exit_status);
 		expand->inner++;
 		while(tmp[count])
 			temp[(*i)++] = tmp[count++];
@@ -99,7 +99,7 @@ int		content_len(t_shell *shell,t_token *token, t_expand *expand)
 	else if(token->content[expand->outer][expand->inner] == '?')
 	{
 		expand->inner++;
-		count += numlen(g_exit_status);
+		count += numlen(shell->exit_status);
 	}
 	else if(token->content[expand->outer][expand->inner] == '0')
 	{
