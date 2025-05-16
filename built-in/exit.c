@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:34:44 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/14 19:21:23 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/16 11:54:20 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,11 @@ void	free_tokenizer(t_token *tokens)
 			ft_free_2d(tokens->content);
 		if (tokens->type)
 			free(tokens->type);
+		if (tokens->heredoc_file)
+		{
+			unlink(tokens->heredoc_file);
+			free(tokens->heredoc_file);
+		}
 		free(tokens);
 		tokens = temp;
 	}
@@ -66,22 +71,16 @@ void free_shell(t_shell *shell)
 {
 	if (!shell)
 		return;
-
 	if (shell->cmd_list)
 		free_str_array(shell->cmd_list);
-
 	if (shell->paths)
 		free_str_array(shell->paths);
-
 	if (shell->prompt)
 		free(shell->prompt);
-
 	if (shell->enviroment)
 		free_str_array(shell->enviroment);
-
 	if (shell->variable)
 		free(shell->variable);
-
 	if (shell->env)
 		free_env(shell->env);
 	free(shell);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/15 19:47:39 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/16 11:50:41 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,22 +183,31 @@ int    open_heredocs(t_shell *shell,char *exit, char *file)
 
 void    heredoc_handle(t_token *tokens , t_shell *shell)
 {   
-    t_token *temp = tokens;
-    int i = 0;
-    int fd = 0;
-    while(temp->content[i])
-    {
-        if(temp->type[i] == HEREDOC)
-        {
-            char *exit = ft_strdup(temp->content[i+1]);
-            if(fd)
-                close(fd);
-            fd = open_heredocs(shell, exit, temp->heredoc_file);
-        }
-        i++;
-    }
-    if(fd)
-        close(fd);
+    t_token *temp;
+    int i;
+    int fd;
+
+	temp = tokens;
+	i = 0;
+	fd = 0;
+	while (temp)
+	{
+		i = 0;
+		while(temp->content[i])
+		{
+			if(temp->type[i] == HEREDOC)
+			{
+				char *exit = ft_strdup(temp->content[i+1]);
+				if(fd)
+					close(fd);
+				fd = open_heredocs(shell, exit, temp->heredoc_file);
+			}
+			i++;
+		}
+		if(fd)
+			close(fd);
+		temp = temp->next;
+	}
 }
 
 int is_there_redirectin(t_token *tokens)
@@ -278,9 +287,9 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     i = 0;
     // Create child processes for each command
     create_heredoc_files(tokens);
-    while (i < pipes_count + 1) 
+	heredoc_handle(tokens,shell);
+    while (tokens)//i < pipes_count + 1)
     {
-        heredoc_handle(tokens,shell);
         pids[i] = fork();
         if (pids[i] == -1) 
         {
@@ -546,6 +555,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
             {
                 if(ft_executor(shell,tokens))
                 {
+					fprintf(stderr, "hello theree\n");
                     if(shell->fd_out)
 		                close(shell->fd_out);
                     exit(0);
@@ -615,6 +625,7 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
             }
             exit(1);
         }
+		fprintf(stderr, "hello theree\n");
         tokens = tokens->next;
         free(shell->cmd_list);
         shell->cmd_list = NULL;
@@ -622,7 +633,8 @@ void execute_multiple(t_token *tokens, t_shell *shell, t_parser *parser)
     }
     // Close all pipe ends in the parent process
     j = 0;
-    while (j < pipes_count) {
+    while (j < pipes_count)
+	{
         close(pipes[j][0]);
         close(pipes[j][1]);
         j++;
