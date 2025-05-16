@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/16 23:19:44 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/17 01:46:00 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,11 @@ void	init_minishell(t_shell *shell)
 			if (tokens)
 			{
 				ft_parser(tokens, parser, shell);
+				if (shell->paths)
+				{
+					ft_free_2d(shell->paths);
+					shell->paths = NULL;
+				}
 				ft_expander(shell, tokens);
 			}
 			// print_tokens(tokens);
