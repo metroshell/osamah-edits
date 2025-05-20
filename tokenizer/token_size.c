@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_size.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 22:01:02 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/22 14:08:28 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:36:33 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	count_without_qoutes(t_shell *shell)
 		&& shell->prompt[shell->temp_index] != ' '
 		&& shell->prompt[shell->temp_index] != '<')
 	{
-		// && shell->prompt[shell->temp_index]
 		if (shell->prompt[shell->temp_index] == '\'')
 		{
 			shell->temp_index++;
@@ -75,5 +74,4 @@ void	tokenizer_size(t_shell *shell)
 			shell->counter++;
 		}
 	}
-	// printf("counter = %d\n", shell->counter);
 }

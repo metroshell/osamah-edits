@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 01:46:00 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:53:42 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,37 @@ void	print_tokens(t_token *arg)
 	}
 }
 
+int ft_executor_norm(t_shell *shell, t_token *token)
+{
+	if (ft_strcmp(token->content[0], "unset") == 0)
+	{
+		unset_command(shell, token);
+		return (1);
+	}
+	else if (ft_strcmp(token->content[0], "pwd") == 0)
+	{
+		ft_pwd();
+		return (1);
+	}
+	else if (ft_strcmp(token->content[0], "cd") == 0)
+	{
+		ft_cd(shell, token);
+		return (1);
+	}
+	else if (ft_strcmp(token->content[0], "exit") == 0)
+	{
+		ft_exit(token,shell);
+		return (1);
+	}
+	return (0);
+}
+
 int	ft_executor(t_shell *shell, t_token *token)
 {
 
-	if (token->content && token->content[0])
+	if (token->content[0])
 	{
-		if (ft_strcmp(token->content[0], "env") == 0
-			&& token->content[1] == NULL)
+		if (ft_strcmp(token->content[0], "env") == 0)
 		{
 			print_env(shell,shell->env);
 			return (1);
@@ -89,26 +113,8 @@ int	ft_executor(t_shell *shell, t_token *token)
 			export_command(shell, token);
 			return (1);
 		}
-		else if (ft_strcmp(token->content[0], "unset") == 0)
-		{
-			unset_command(shell, token);
-			return (1);
-		}
-		else if (ft_strcmp(token->content[0], "pwd") == 0)
-		{
-			ft_pwd();
-			return (1);
-		}
-		else if (ft_strcmp(token->content[0], "cd") == 0)
-		{
-			ft_cd(shell, token);
-			return (1);
-		}
-		else if (ft_strcmp(token->content[0], "exit") == 0)
-		{
-			ft_exit(token,shell);
-			return (1);
-		}
+		else
+			ft_executor_norm(shell,token);
 	}
 	return (0);
 }

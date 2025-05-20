@@ -6,16 +6,23 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 16:03:27 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/15 19:49:41 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:31:05 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	skip_spaces(t_shell *shell)
+void	check_filename(t_shell *shell)
 {
 	while (shell->prompt[shell->prompt_index] == ' ')
 		shell->prompt_index++;
+	if (!shell->prompt[shell->prompt_index]
+		|| shell->prompt[shell->prompt_index] == '|' )
+	{
+		shell->token_flag = 1;
+		printf("qais\n");
+		printf("arssh: syntax error near unexpected token `newline'\n");
+	}
 }
 
 t_token	*create_new_node(t_shell *shell)

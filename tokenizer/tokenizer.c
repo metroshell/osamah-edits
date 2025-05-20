@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 13:59:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/22 18:55:35 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:35:48 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,12 @@ int	check_pipe(t_shell *shell)
 	return (1);
 }
 
+void	skip_spaces(t_shell *shell)
+{
+	while (shell->prompt[shell->prompt_index] == ' ')
+		shell->prompt_index++;
+}
+
 t_token	*tokenizer(t_shell *shell)
 {
 	t_token	*head;
@@ -75,11 +81,9 @@ t_token	*tokenizer(t_shell *shell)
 	shell->prompt_index = 0;
 	shell->token_index = 0;
 	shell->token_flag = 0;
-	shell->counter = 0;
 	head = create_new_node(shell);
 	token = head;
-	while (shell->prompt[shell->prompt_index] == ' ')
-		shell->prompt_index++;
+	skip_spaces(shell);
 	while (shell->prompt_index < (int)ft_strlen(shell->prompt)
 		&& shell->prompt[shell->prompt_index])
 	{
@@ -92,9 +96,7 @@ t_token	*tokenizer(t_shell *shell)
 			return (NULL);
 		}
 		check_prompt_3(shell, &token);
-		while (shell->prompt_index < (int)ft_strlen(shell->prompt)
-			&& shell->prompt[shell->prompt_index] == ' ')
-			shell->prompt_index++;
+		skip_spaces(shell);
 	}
 	token->content[shell->token_index] = NULL;
 	return (head);

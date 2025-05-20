@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/16 23:04:00 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:26:26 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,29 +266,29 @@ int	open_redirect_in(t_fds *fd, char	**lst)
 int	open_redirect_out(t_fds *fd, char	**lst)
 {
 	int	i;
-	int	j;
+	// int	j;
 	char	*file;
 	
 	fd->saved_out = dup(STDOUT_FILENO);
 	fd->flag_out = 0;
 	i = 0;
-	j = 0;
+	// j = 0;
 	while (lst[i])
 	{
 		if (!ft_strcmp(lst[i], ">"))
 		{
 			i++;
 			file = ft_strdup(lst[i]);
-			fd->fd_out[j] = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd->fd_out[j] < 0)
+			fd->fd_out = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd->fd_out < 0)
 			{
 				write(1, "arssh: ", 7);
 				perror(lst[i]);
 				free(file);
 				close (fd->saved_out);
-				return (fd->fd_out[j]);
+				return (fd->fd_out);
 			}
-			close(fd->fd_out[j]);
+			close(fd->fd_out);
 			fd->flag_out = 1;
 			i++;
 			if (lst[i] && !ft_strcmp(lst[i] , ">"))
@@ -301,16 +301,16 @@ int	open_redirect_out(t_fds *fd, char	**lst)
 		{
 			i++;
 			file = ft_strdup(lst[i]);
-			fd->fd_out[j] = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd->fd_out[j] < 0)
+			fd->fd_out = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd->fd_out < 0)
 			{
 				write(1, "arssh: ", 7);
 				perror(lst[i]);
 				free(file);
 				close (fd->saved_out);
-				return (fd->fd_out[j]);
+				return (fd->fd_out);
 			}
-			close(fd->fd_out[j]);
+			close(fd->fd_out);
 			fd->flag_out = 1;
 			i++;
 			if (lst[i] && !ft_strcmp(lst[i] , ">>"))
@@ -324,10 +324,10 @@ int	open_redirect_out(t_fds *fd, char	**lst)
 	}
 	if (fd->flag_out)
 	{
-		fd->fd_out[j] = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		fd->fd_out = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		free(file);
-		dup2(fd->fd_out[j], STDOUT_FILENO);
-		close(fd->fd_out[j]);
+		dup2(fd->fd_out, STDOUT_FILENO);
+		close(fd->fd_out);
 	}
 	else if (!fd->flag_out)
 	{
@@ -448,12 +448,20 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 	shell->cmd_list = create_list(tokens, fd, shell);
 	if (!shell->cmd_list)
 		return ;
-	if(fd->saved_out)
-		shell->fd_out = fd->saved_out;
+	if(fd->flag_out)
+	{
+		// fprintf(stderr, "hi = %i\n", fd->fd_out);
+		shell->fd_out = dup(fd->fd_out);
+	}
 	if(ft_executor(shell,tokens))
 	{
 		if(shell->fd_out)
-			close(shell->fd_out);
+		{
+			fprintf(stderr, "hi = %i\n", fd->fd_out);
+			dup2(fd->saved_out, STDOUT_FILENO);
+			close (fd->saved_out);
+			// close (shell->fd_out);
+		}
 		free(fd);
 		ft_free_2d(shell->cmd_list);
 		// exit_execution(shell,tokens,parser);
@@ -476,7 +484,7 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 		}
 		if (fd->flag_out)
 		{
-			close (fd->fd_out[0]);
+			close (fd->fd_out);
 			close (fd->saved_out);
 		}
 		if (fd->flag_in)
@@ -540,6 +548,7 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 		}
 		execve(cmd, shell->cmd_list, shell->enviroment);
 	}
+	signal(SIGINT,SIG_IGN);
 	int status;
 	waitpid(id, &status, 0);
     if (WIFEXITED(status))
@@ -587,6 +596,7 @@ void	execute(t_shell *shell, t_token *tokens, t_parser *parser)
 	{
 		// if(is_there_command(tokens))
 		execute_command(tokens, shell, parser);
+		signal_handler();
 		// if (shell->paths)
 		// {
 		// 	ft_free_2d(shell->paths);

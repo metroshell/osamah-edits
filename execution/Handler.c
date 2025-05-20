@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/16 23:42:41 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:05:57 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ static void heredoc_signal_handler(int sig)
 {
     (void)sig;
     rl_redisplay();
-    write(2, "^C\n", 3);
+    write(2, "\n", 1);
 	rl_on_new_line();
     exit(128 + SIGINT);
 }

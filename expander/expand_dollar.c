@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:41:38 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 01:42:23 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:12:29 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	expand_dollar(t_shell *shell, t_token *token, t_expand *expand)
 	x = count_length(shell, token, expand);
 	if ((int)ft_strlen(token->content[expand->out]) == x)
 		return ;
-	temp = malloc(x + count_dollar(token, expand));
+	temp = malloc(x + 1);
 	if (!temp)
 		exit(130);
 	expand->variable = NULL;

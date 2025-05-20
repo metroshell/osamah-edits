@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:27:50 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 01:33:57 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:14:42 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,6 @@ int	numlen(int n)
 		len++;
 	}
 	return (len);
-}
-
-int	count_dollar(t_token *token, t_expand *expand)
-{
-	int	count;
-	int	i;
-
-	count = 0;
-	i = 0;
-	while (token->content[expand->out][i])
-	{
-		if (token->content[expand->out][i] == '$')
-			count++;
-		i++;
-	}
-	return (count);
 }
 
 static void	handle_2(t_shell *shell, t_token *token, t_expand *expand,

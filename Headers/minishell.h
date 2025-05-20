@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 02:11:52 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:15:56 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_heredoc
 typedef struct s_fds
 {
 	int				fd_in[2];
-	int				fd_out[2];
+	int				fd_out;
 	int				fd_heredoc;
 	int				saved_out;
 	int				saved_in;
@@ -137,6 +137,7 @@ void				check_prompt_2(t_shell *shell, t_token **token);
 void				check_prompt_3(t_shell *shell, t_token **token);
 void				check_prompt_4(t_shell *shell);
 void				check_errors(t_shell *shell);
+void				check_filename(t_shell *shell);
 
 // parser
 void				ft_parser(t_token *head, t_parser *parser, t_shell *shell);
@@ -161,7 +162,6 @@ int					count_length(t_shell *shell, t_token *token,
 						t_expand *expand);
 void				handle_dollar(t_shell *shell, t_token *token,
 						t_expand *expand, char *temp);
-int					count_dollar(t_token *token, t_expand *expand);
 
 // env command
 void				env_copy(t_shell *shell, char **env);

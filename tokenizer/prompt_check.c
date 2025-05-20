@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 23:10:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/04/30 14:39:21 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:31:13 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,27 +75,25 @@ void	check_prompt_2(t_shell *shell, t_token **token)
 	{
 		(*token)->content[shell->token_index++] = ft_strdup("<<");
 		shell->prompt_index += 2;
+		check_filename(shell);
 	}
 	if (ft_strncmp(&shell->prompt[shell->prompt_index], ">>", 2) == 0)
 	{
 		(*token)->content[shell->token_index++] = ft_strdup(">>");
 		shell->prompt_index += 2;
+		check_filename(shell);
 	}
 	if (shell->prompt[shell->prompt_index] == '<')
 	{
 		(*token)->content[shell->token_index++] = ft_strdup("<");
 		shell->prompt_index++;
+		check_filename(shell);
 	}
 	if (shell->prompt[shell->prompt_index] == '>')
 	{
 		(*token)->content[shell->token_index++] = ft_strdup(">");
 		shell->prompt_index++;
-	}
-	skip_spaces(shell);
-	if (!shell->prompt[shell->prompt_index] )
-	{
-		shell->token_flag = 1;
-		printf("arssh: syntax error near unexpected token `newline'\n");
+		check_filename(shell);
 	}
 }
 

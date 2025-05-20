@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 14:10:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 01:43:28 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:11:37 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ static void	double_quote(t_token *token, t_expand *expand, t_shell *shell,
 		{
 			if (token->content[expand->out][expand->in] == '$')
 			{
-				(*size) += content_len(shell, token, expand) - 1;
+				(*size) += content_len(shell, token, expand);
 				free(expand->variable);
 				expand->variable = NULL;
 			}
