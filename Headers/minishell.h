@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/20 20:15:56 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/21 20:45:24 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,20 @@ typedef struct s_fds
 	char			*temp;
 }					t_fds;
 
+typedef struct s_execute
+{
+	int index;
+	int	j;
+	int pipes_count;
+	char *cmd;
+	int **pipes;
+	int *pids;
+	int count_rout;
+	int count_rin;
+	int count_append;
+	int flag;
+	
+} t_execute;
 typedef struct s_export
 {
 	int				index;
@@ -85,9 +99,9 @@ typedef struct s_shell
 	int				echo_flag;
 	int				quote_counter;
 	int				expand_flag;
-	int				fd_out;
 	int				exit_status;
 	t_env			*env;
+	t_execute		*exe;
 }					t_shell;
 
 typedef enum s_type
@@ -165,7 +179,7 @@ void				handle_dollar(t_shell *shell, t_token *token,
 
 // env command
 void				env_copy(t_shell *shell, char **env);
-void				print_env(t_shell *shell, t_env *env);
+void				print_env(t_env *env);
 void				env_edit(t_shell *shell);
 t_env				*create_env_node(void);
 
@@ -211,8 +225,7 @@ void				open_heredoc(t_shell *shell, char **lst, t_fds *fds);
 void				skip_spaces(t_shell *shell);
 void				exit_execution(t_shell *shell, t_token *tokens,
 						t_parser *parser);
-void				execute_multiple(t_token *tokens, t_shell *shell,
-						t_parser *parser);
+void				execute_multiple(t_token *tokens, t_shell *shell);
 char				**get_env(t_env *env);
 char				**create_list(t_token *tokens, t_fds *fd, t_shell *shell);
 int					how_many_pipes(t_token *tokens);
@@ -226,5 +239,14 @@ int					redirect_first_arg(t_token *tokens);
 char				**rearrange_list_redirect(t_token *tokens);
 int					is_there_heredoc(t_token *tokens);
 int					create_heredoc_files(t_token *tokens);
+
+//redirections
+void    handle_redirectout(t_shell *shell,t_token *tokens,int x);
+int is_there_redirectin(t_token *tokens);
+int is_there_append(t_token *tokens);
+int is_there_redirectout(t_token *tokens);
+void    handle_append(t_shell *shell,t_token *tokens,int x);
+void    handle_redirectin(t_shell *shell,t_token *tokens,int x);
+
 
 #endif

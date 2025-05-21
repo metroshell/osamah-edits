@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/20 20:26:26 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:23:16 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,7 +301,7 @@ int	open_redirect_out(t_fds *fd, char	**lst)
 		{
 			i++;
 			file = ft_strdup(lst[i]);
-			fd->fd_out = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fd->fd_out = open(file, O_RDWR | O_CREAT | O_APPEND, 0644);
 			if (fd->fd_out < 0)
 			{
 				write(1, "arssh: ", 7);
@@ -310,14 +310,15 @@ int	open_redirect_out(t_fds *fd, char	**lst)
 				close (fd->saved_out);
 				return (fd->fd_out);
 			}
-			close(fd->fd_out);
-			fd->flag_out = 1;
+			// close(fd->fd_out);
+			// fd->flag_out = 1;
 			i++;
 			if (lst[i] && !ft_strcmp(lst[i] , ">>"))
 			{
 				free(file);
 				file = NULL;
 			}
+			dup2(fd->fd_out, STDOUT_FILENO);
 		}
 		else
 			i++;
@@ -329,10 +330,10 @@ int	open_redirect_out(t_fds *fd, char	**lst)
 		dup2(fd->fd_out, STDOUT_FILENO);
 		close(fd->fd_out);
 	}
-	else if (!fd->flag_out)
-	{
-		close (fd->saved_out);
-	}
+	// else if (!fd->flag_out)
+	// {
+	// 	close (fd->saved_out);
+	// }
 	return (1);
 }
 
@@ -448,19 +449,17 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 	shell->cmd_list = create_list(tokens, fd, shell);
 	if (!shell->cmd_list)
 		return ;
-	if(fd->flag_out)
-	{
-		// fprintf(stderr, "hi = %i\n", fd->fd_out);
-		shell->fd_out = dup(fd->fd_out);
-	}
+	// if(fd->flag_out)
+	// {
+	// 	// fprintf(stderr, "hi = %i\n", fd->fd_out);
+	// 	shell->fd_out = dup(fd->fd_out);
+	// }
 	if(ft_executor(shell,tokens))
 	{
-		if(shell->fd_out)
+		if(fd->fd_out)
 		{
-			fprintf(stderr, "hi = %i\n", fd->fd_out);
 			dup2(fd->saved_out, STDOUT_FILENO);
-			close (fd->saved_out);
-			// close (shell->fd_out);
+			close(fd->saved_out);
 		}
 		free(fd);
 		ft_free_2d(shell->cmd_list);
@@ -470,7 +469,6 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 	id = fork();
 	if (id == 0)
 	{
-		g_exit_status = 0;
 		j = 0;
 		if (fd->flag_heredoc)
 		{
@@ -546,16 +544,17 @@ void	execute_command(t_token *tokens, t_shell *shell, t_parser *parser)
 			free(fd);
 			exit(0);
 		}
+		signal(SIGQUIT,SIG_DFL);
 		execve(cmd, shell->cmd_list, shell->enviroment);
 	}
 	signal(SIGINT,SIG_IGN);
 	int status;
 	waitpid(id, &status, 0);
     if (WIFEXITED(status))
-        g_exit_status = WEXITSTATUS(status);
+        shell->exit_status = WEXITSTATUS(status);
     else if (WIFSIGNALED(status))
 	{
-	   g_exit_status = 128 + WTERMSIG(status);
+	   shell->exit_status = 128 + WTERMSIG(status);
 	}
 	if (fd->flag_out)
 	{
@@ -589,8 +588,8 @@ void	execute(t_shell *shell, t_token *tokens, t_parser *parser)
 		return ;
 	if (how_many_pipes(tokens) > 0)
 	{
-		printf("there is pipes : %i\n", how_many_pipes(tokens));
-		execute_multiple(tokens,shell,parser);
+		execute_multiple(tokens,shell);
+		signal_handler();
 	}
 	else
 	{

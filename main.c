@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/20 19:53:42 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/21 15:40:16 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	ft_executor(t_shell *shell, t_token *token)
 	{
 		if (ft_strcmp(token->content[0], "env") == 0)
 		{
-			print_env(shell,shell->env);
+			print_env(shell->env);
 			return (1);
 		}
 		else if (ft_strcmp(token->content[0], "echo") == 0)
@@ -114,7 +114,7 @@ int	ft_executor(t_shell *shell, t_token *token)
 			return (1);
 		}
 		else
-			ft_executor_norm(shell,token);
+			return (ft_executor_norm(shell,token));
 	}
 	return (0);
 }
@@ -126,16 +126,15 @@ void	init_minishell(t_shell *shell)
 
 	while (1)
 	{
-		shell->exit_status = g_exit_status;
-		g_exit_status = 0;
 		shell->prompt = readline("\033[93mArab Spring 🐣🐥 -> \033[0m");
 		if (!shell->prompt)
 		{
 			printf("exit\n");
 			if (shell->env)
 				free_env(shell->env);
+			int x = shell->exit_status;
 			free(shell);
-			exit(0);
+			exit(x);
 		}
 		if (!ft_strcmp(shell->prompt, ""))
 			continue ;

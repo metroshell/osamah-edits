@@ -15,7 +15,8 @@ SRCS = main.c signals.c\
 	./built-in/export/export.c ./built-in/export/export_utils.c ./built-in/export/export_norm.c \
 	./built-in/unset.c ./built-in/cd.c ./built-in/pwd.c \
 	./built-in/exit/exit.c ./built-in/exit/exit_utils.c \
-	./execution/execution.c ./execution/HereDoc/heredoc.c ./execution/Handler.c\
+	./execution/execution.c ./execution/HereDoc/heredoc.c ./execution/Handler.c \
+	./execution/redirection/redirections.c ./execution/redirection/redirect_utils.c
 
 OBJS_DIR := objects
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

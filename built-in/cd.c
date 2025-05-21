@@ -21,7 +21,7 @@ void	change_oldpwd(t_shell *shell, char *cwd)
 		oldpwd = oldpwd->next;
 	if (!ft_strcmp(oldpwd->variable, "OLDPWD"))
 	{
-		free (oldpwd->content);
+		free(oldpwd->content);
 		oldpwd->content = ft_strdup(cwd);
 	}
 }

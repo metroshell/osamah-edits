@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 11:05:04 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/20 19:19:01 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/21 00:02:14 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,13 +356,13 @@ void    open_heredoc(t_shell *shell, char **lst, t_fds *fds)
                 sigaction(SIGINT, &original_sa, NULL);
                 if (WIFEXITED(status))
                 {
-                    g_exit_status = WEXITSTATUS(status);
-                    if (g_exit_status == 128 + SIGINT)
+                    shell->exit_status = WEXITSTATUS(status);
+                    if (shell->exit_status == 128 + SIGINT)
                         return;
                 }
                 else if (WIFSIGNALED(status))
                 {
-                    g_exit_status = 128 + WTERMSIG(status);
+                    shell->exit_status = 128 + WTERMSIG(status);
                     return;
                 }
             }

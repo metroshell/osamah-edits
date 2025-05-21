@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 05:18:33 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 01:53:19 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/21 01:31:05 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	copy_content(t_env *current, int total_len, char *result)
 	}
 }
 
-void	print_env(t_shell *shell, t_env *env)
+void	print_env(t_env *env)
 {
 	t_env	*current;
 	size_t	total_len;
@@ -49,7 +49,8 @@ void	print_env(t_shell *shell, t_env *env)
 	result[0] = '\0';
 	current = env;
 	copy_content(current, total_len, result);
-	write(shell->fd_out, result, ft_strlen(result));
+	write(1,result,ft_strlen(result));
+	// printf("%s\n",result);
 	free(result);
 }
 

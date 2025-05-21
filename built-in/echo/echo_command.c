@@ -6,13 +6,13 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 02:45:52 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/20 20:23:46 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/21 00:18:29 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	echo_arument(t_shell *shell, t_token *token)
+void	echo_argument(t_shell *shell, t_token *token)
 {
 	int	i;
 
@@ -38,20 +38,17 @@ void	echo_arument(t_shell *shell, t_token *token)
 void	echo_command(t_shell *shell, t_token *token)
 {
 	shell->temp_index = 1;
-	echo_arument(shell, token);
+	echo_argument(shell, token);
 	while (shell->cmd_list[shell->temp_index])
 	{
 		if (shell->cmd_list[shell->temp_index])
 		{
-			fprintf(stderr, "hello there = %s\n", shell->cmd_list[shell->temp_index]);
-			write(shell->fd_out, shell->cmd_list[shell->temp_index],
-				ft_strlen(shell->cmd_list[shell->temp_index]));
+			printf("%s", shell->cmd_list[shell->temp_index]);
 			if (shell->cmd_list[shell->temp_index + 1])
-				write(shell->fd_out, " ", 1);
+				printf(" ");
 		}
 		shell->temp_index++;
 	}
 	if (shell->echo_flag != 1)
-		write(shell->fd_out, "\n", 1);
-	close (shell->fd_out);
+		printf("\n");
 }
