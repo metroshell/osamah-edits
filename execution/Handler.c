@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/21 21:15:30 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/22 19:25:51 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,20 @@ int counter(t_token *tokens)
     return (count);
 }
 
+void list_redirect_2(t_token *temp, char **lst, int *i, int *j)
+{
+    if(temp->type[*i] == HEREDOC || temp->type[*i] == REDIRECTIN
+        || temp->type[*i] == REDIRECTOUT || temp->type[*i] == APPEND
+        || temp->type[*i] == ENDOFFILE || temp->type[*i] == FILENAME)
+        (*i)++;
+	else if (temp->type[*i] == COMMAND || temp->type[*i] == ARGUMENT || temp->type[*i] == TEXT )
+	{
+		lst[*j] = ft_strdup(temp->content[*i]);
+		(*i)++;
+        (*j)++;
+    }
+}
+
 char	**list_redirect(t_token *tokens)
 {
 	t_token	*temp;
@@ -108,18 +122,7 @@ char	**list_redirect(t_token *tokens)
 		return (NULL);
 	j = 0;
 	while (temp->content[i])
-	{
-		if(temp->type[i] == HEREDOC || temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT || temp->type[i] == APPEND  || temp->type[i] == ENDOFFILE || temp->type[i] == FILENAME )
-            i++;
-		else if (temp->type[i] == COMMAND || temp->type[i] == ARGUMENT || temp->type[i] == TEXT )
-		{
-			lst[j] = ft_strdup(temp->content[i]);
-			if (!lst[j])
-				printf("hello\n");
-                i++;
-                j++;
-        }
-	}
+        list_redirect_2(temp, lst, &i, &j);
     if(is_there_command(temp) && is_there_heredoc(temp))
     {
 		if(temp->heredoc_file)
@@ -127,6 +130,23 @@ char	**list_redirect(t_token *tokens)
     }
 	lst[j] = NULL;
 	return (lst);
+}
+
+void copy_command_line_2(int *i, t_token *temp, char **list, int *j)
+{
+    if(temp->type[*i] == HEREDOC || temp->type[*i] == REDIRECTIN
+        || temp->type[*i] == REDIRECTOUT || temp->type[*i] == APPEND
+        || temp->type[*i] == ENDOFFILE || temp->type[*i] == FILENAME)
+    (*i)++;
+    else if (temp->type[*i] == COMMAND || temp->type[*i] == ARGUMENT
+        || temp->type[*i] == TEXT )
+	{
+        list[*j] = ft_strdup(temp->content[*i]);
+        if (!list[*j])
+            printf("hello\n");
+        (*j)++;
+        (*i)++;
+    }
 }
 
 char **copy_command_line(t_token *tokens)
@@ -143,19 +163,8 @@ char **copy_command_line(t_token *tokens)
 	if (!list)
 		return (NULL);
 	while (temp->content[i])
-	{
-        if(temp->type[i] == HEREDOC || temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT || temp->type[i] == APPEND  || temp->type[i] == ENDOFFILE || temp->type[i] == FILENAME )
-            i++;
-        else if (temp->type[i] == COMMAND || temp->type[i] == ARGUMENT || temp->type[i] == TEXT )
-		{
-            list[j] = ft_strdup(temp->content[i]);
-            if (!list[j])
-                printf("hello\n");
-            j++;
-            i++;
-        }
-	}
-    if(is_there_command(temp) && is_there_heredoc(temp))
+        copy_command_line_2(&i, temp, list, &j);
+    if (is_there_command(temp) && is_there_heredoc(temp))
     {
 		if(temp->heredoc_file)
         	list[j++] = ft_strdup(temp->heredoc_file);
@@ -203,6 +212,20 @@ static void heredoc_signal_handler(int sig)
     exit(128 + SIGINT);
 }
 
+void herdoc_ctrl_d(char *text, char *exit_heredoc)
+{
+    char *tmp;
+    char *t;
+    
+    tmp = ft_strjoin("ARSSH: warning: here-document delimited by end-of-file ( wanted `", exit_heredoc);
+    t = ft_strjoin(tmp, "\')\n");
+    free(tmp);
+    write(2, t, ft_strlen(t));
+    free(t);
+    free(text);
+    exit(0);
+}
+
 int    open_heredocs(t_shell *shell,char *exit_heredoc, char *file)
 {
     char *text = NULL;
@@ -213,15 +236,7 @@ int    open_heredocs(t_shell *shell,char *exit_heredoc, char *file)
     {
         text = readline("> ");
         if (!text)
-        {
-            char *tmp = ft_strjoin("ARSSH: warning: here-document delimited by end-of-file ( wanted `", exit_heredoc);
-            char *t = ft_strjoin(tmp, "\')\n");
-            free(tmp);
-            write(2, t, ft_strlen(t));
-            free(t);
-            free(text);
-            exit(0);
-        }
+            herdoc_ctrl_d(text, exit_heredoc);
         if(shell->expand_flag)
             text = expand_heredoc(text, shell);
         if (text && exit_heredoc && !ft_strcmp(text, exit_heredoc))
@@ -381,7 +396,7 @@ void    cmd_check(t_shell *shell)
 void    normal_execute(t_shell *shell,t_token *tokens)
 {
     shell->exe->flag = 0;
-    path_check(shell,tokens);
+    path_check(shell, tokens);
     if (shell->cmd_list[0] && !shell->exe->flag) 
     {
         cmd_check(shell);
@@ -406,6 +421,82 @@ void    normal_execute(t_shell *shell,t_token *tokens)
     execve(shell->exe->cmd, shell->cmd_list, shell->enviroment);
 }
 
+void child_process_2(t_token *tokens, t_shell *shell)
+{
+    shell->cmd_list = list(tokens);
+    shell->exe->j = 0;
+    while (shell->exe->j < shell->exe->pipes_count)
+	{
+        if (shell->exe->index != shell->exe->j + 1)
+            close(shell->exe->pipes[shell->exe->j][0]);
+        if (shell->exe->index != shell->exe->j)
+            close(shell->exe->pipes[shell->exe->j][1]);
+        shell->exe->j++;
+    }
+}
+
+void child_process_3(t_token *tokens, t_shell *shell, int flag)
+{
+    int x = 0;
+    if (flag == 1)
+    {
+        dup2(shell->exe->pipes[shell->exe->index][1],STDOUT_FILENO);
+        close(shell->exe->pipes[shell->exe->index][1]);
+    }
+    shell->exe->count_rout = 0;
+    shell->exe->count_rin = 0;
+    shell->exe->count_append = 0;
+    while(tokens->content[x])
+    {
+        if (tokens->type[x] == REDIRECTOUT)
+            handle_redirectout(shell,tokens,x);
+        else if(tokens->type[x] == APPEND)
+            handle_append(shell,tokens,x);
+        else if(tokens->type[x] == REDIRECTIN)
+            handle_redirectin(shell,tokens, x);
+        x++;
+    }
+}
+
+void dup_and_close(t_shell *shell)
+{
+    dup2(shell->exe->pipes[shell->exe->index - 1][0], STDIN_FILENO);
+    close(shell->exe->pipes[shell->exe->index - 1][0]); 
+    if (shell->exe->index != shell->exe->pipes_count)
+    {
+        dup2(shell->exe->pipes[shell->exe->index][1], STDOUT_FILENO);
+        close(shell->exe->pipes[shell->exe->index][1]);
+    }
+}
+
+void child_process_4(t_token *tokens, t_shell *shell)
+{
+    if (shell->exe->index == 0) 
+    {
+        if(is_there_redirect(tokens))
+            child_process_3(tokens, shell, 1);
+        else
+        {
+            dup2(shell->exe->pipes[shell->exe->index][1], STDOUT_FILENO);
+            close(shell->exe->pipes[shell->exe->index][1]);
+        }
+    }
+    else if (shell->exe->index == shell->exe->pipes_count)
+    {
+        if(is_there_redirect(tokens))
+            child_process_3(tokens, shell, 0);
+        else
+            dup_and_close(shell);
+    }
+    else
+    {
+        if(is_there_redirect(tokens))
+            child_process_3(tokens, shell, 1);
+        else
+            dup_and_close(shell);
+    }
+}
+
 void    child_process(t_shell *shell,t_token *tokens)
 {
     shell->exe->pids[shell->exe->index] = fork();
@@ -416,151 +507,38 @@ void    child_process(t_shell *shell,t_token *tokens)
     }
     if (shell->exe->pids[shell->exe->index] == 0) 
     {
-        shell->cmd_list = list(tokens);
-        shell->exe->j = 0;
-        while (shell->exe->j < shell->exe->pipes_count)
-		{
-            if (shell->exe->index != shell->exe->j + 1)
-                close(shell->exe->pipes[shell->exe->j][0]);
-            if (shell->exe->index != shell->exe->j)
-                close(shell->exe->pipes[shell->exe->j][1]);
-            shell->exe->j++;
-        }
-        if (shell->exe->index == 0) 
-        {
-            if(is_there_redirect(tokens))
-            {
-                dup2(shell->exe->pipes[shell->exe->index][1],STDOUT_FILENO);
-                close(shell->exe->pipes[shell->exe->index][1]);
-                int x = 0;
-                shell->exe->count_rout = 0;
-                shell->exe->count_rin = 0;
-                shell->exe->count_append = 0;
-                while(tokens->content[x])
-                {
-                    if (tokens->type[x] == REDIRECTOUT)
-                        handle_redirectout(shell,tokens,x);
-                    else if(tokens->type[x] == APPEND)
-                        handle_append(shell,tokens,x);
-                    else if(tokens->type[x] == REDIRECTIN)
-                        handle_redirectin(shell,tokens, x);
-                    x++;
-                }
-            }
-            else
-            {
-                dup2(shell->exe->pipes[shell->exe->index][1], STDOUT_FILENO);
-                close(shell->exe->pipes[shell->exe->index][1]);
-            }
-        }
-        else if (shell->exe->index == shell->exe->pipes_count)
-        {
-            if(is_there_redirect(tokens))
-            {
-                int x = 0;
-                shell->exe->count_rout = 0;
-                shell->exe->count_rin = 0;
-                shell->exe->count_append = 0;
-                while(tokens->content[x])
-                {
-                    if (tokens->type[x] == REDIRECTOUT)
-                        handle_redirectout(shell,tokens,x);
-                    else if(tokens->type[x] == APPEND)
-                        handle_append(shell,tokens,x);
-                    else if(tokens->type[x] == REDIRECTIN)
-                        handle_redirectin(shell,tokens, x);
-                    x++;
-                }
-            }
-            else
-            {
-                dup2(shell->exe->pipes[shell->exe->index - 1][0], STDIN_FILENO);
-                close(shell->exe->pipes[shell->exe->index - 1][0]); 
-                if (shell->exe->index != shell->exe->pipes_count)
-                {
-                    dup2(shell->exe->pipes[shell->exe->index][1], STDOUT_FILENO);
-                    close(shell->exe->pipes[shell->exe->index][1]);
-                }
-            }
-        }
+        child_process_2(tokens, shell);
+        child_process_4(tokens, shell);
+        if(ft_executor(shell,tokens))
+            exit(0);
         else
-        {
-            if(is_there_redirect(tokens))
-            {
-                dup2(shell->exe->pipes[shell->exe->index][1], STDOUT_FILENO);
-                close(shell->exe->pipes[shell->exe->index][1]);
-                int x = 0;
-                shell->exe->count_rout = 0;
-                shell->exe->count_rin = 0;
-                shell->exe->count_append = 0;
-                while(tokens->content[x])
-                {
-                    if (tokens->type[x] == REDIRECTOUT)
-                        handle_redirectout(shell,tokens,x);
-                    else if(tokens->type[x] == APPEND)
-                        handle_append(shell,tokens,x);
-                    else if(tokens->type[x] == REDIRECTIN)
-                        handle_redirectin(shell,tokens, x);
-                    x++;
-                }
-            }
-            else
-            {
-                dup2(shell->exe->pipes[shell->exe->index - 1][0], STDIN_FILENO);
-                close(shell->exe->pipes[shell->exe->index - 1][0]);
-                if (shell->exe->index != shell->exe->pipes_count)
-                {
-                    dup2(shell->exe->pipes[shell->exe->index][1], STDOUT_FILENO);
-                    close(shell->exe->pipes[shell->exe->index][1]);
-                }
-            }
-        }
-        if(is_there_command(tokens))
-        {
-            if(ft_executor(shell,tokens))
-                exit(0);
-            else
-                normal_execute(shell,tokens);
-        }
+            normal_execute(shell,tokens);
         exit(1);
     }    
 }
 
-void execute_multiple(t_token *tokens, t_shell *shell)
+void exec_init(t_token *tokens, t_shell *shell)
 {
-    shell->exe = ft_calloc(1,sizeof(t_execute));
-    if(!shell->exe)
-        return ;
     shell->exe->pipes_count = how_many_pipes(tokens);
     shell->exe->j = 0;
     shell->exe->index = 0;
     shell->exe->pipes = malloc(sizeof(int*) * shell->exe->pipes_count);
     if (shell->exe->pipes == NULL)
-    {
-        write(2, "Memory allocation failed\n", 26);
-        return;
-    }
+        return ;
     while (shell->exe->index < shell->exe->pipes_count) 
     {
         shell->exe->pipes[shell->exe->index] = malloc(sizeof(int) * 2);
         if (shell->exe->pipes[shell->exe->index] == NULL)
-        {
-            write(2, "Memory allocation failed\n", 26);
             return;
-        }
         if (pipe(shell->exe->pipes[shell->exe->index]) == -1)
-        {
-            write(2, "Error with creating pipe\n",26);
             return;
-        }
         shell->exe->index++;
     }
     shell->exe->index = 0;
-    shell->exe->pids = malloc(sizeof(int)*shell->exe->pipes_count + 1);
-    if(!shell->exe->pids)
-        return;
-    create_heredoc_files(tokens);
-	heredoc_handle(tokens,shell);
+}
+
+void exec_commands(t_token *tokens, t_shell *shell)
+{
     while (tokens)
     {
         child_process(shell,tokens);
@@ -577,13 +555,28 @@ void execute_multiple(t_token *tokens, t_shell *shell)
         close(shell->exe->pipes[shell->exe->j][1]);
         shell->exe->j++;
     }
-    shell->exe->index = 0;
+    shell->exe->index = -1;
+}
+
+void execute_multiple(t_token *tokens, t_shell *shell)
+{
     int status;
-    pid_t last_pid = shell->exe->pids[shell->exe->pipes_count];
-    while (shell->exe->index < shell->exe->pipes_count + 1)
+    pid_t last_pid;
+
+    shell->exe = ft_calloc(1, sizeof(t_execute));
+    if(!shell->exe)
+        return;
+    exec_init(tokens, shell);
+    shell->exe->pids = malloc(sizeof(int)*shell->exe->pipes_count + 1);
+    if(!shell->exe->pids)
+        return;
+    create_heredoc_files(tokens);
+	heredoc_handle(tokens,shell);
+    exec_commands(tokens, shell);
+    last_pid = shell->exe->pids[shell->exe->pipes_count];
+    while (++shell->exe->index < shell->exe->pipes_count + 1)
     {
     	shell->exe->pids[shell->exe->index] = wait(&status);
-    
     	if (shell->exe->pids[shell->exe->index] == last_pid)
     	{
     		if (WIFEXITED(status))
@@ -591,7 +584,5 @@ void execute_multiple(t_token *tokens, t_shell *shell)
     		else if (WIFSIGNALED(status))
     			shell->exit_status = 128 + WTERMSIG(status);
     	}
-    	shell->exe->index++;
     }
-    return;
 }
