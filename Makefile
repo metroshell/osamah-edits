@@ -6,7 +6,7 @@ LIBFT_DIR = libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = main.c signals.c\
+SRCS = main.c signals.c main_utils.c\
     ./built-in/environment/env.c ./built-in/environment/env_utils.c\
 	./tokenizer/tokenizer.c ./tokenizer/token_utils.c ./tokenizer/token_size.c ./tokenizer/prompt_check.c \
 	./parser/detect_type.c ./parser/parser.c \
@@ -15,8 +15,15 @@ SRCS = main.c signals.c\
 	./built-in/export/export.c ./built-in/export/export_utils.c ./built-in/export/export_norm.c \
 	./built-in/unset.c ./built-in/cd.c ./built-in/pwd.c \
 	./built-in/exit/exit.c ./built-in/exit/exit_utils.c \
-	./execution/execution.c ./execution/HereDoc/heredoc.c ./execution/Handler.c \
-	./execution/redirection/redirections.c ./execution/redirection/redirect_utils.c
+	./execution/execution.c ./execution/Handler.c \
+	./execution/check.c ./execution/child_process.c ./execution/clean_handle.c ./execution/create_list.c \
+	./execution/execution_utils.c ./execution/leaks_handle.c ./execution/list_command.c ./execution/requirements.c \
+	./execution/redirection/redirections.c ./execution/redirection/redirect_utils.c ./execution/redirection/open_files.c \
+	./execution/redirection/handle_redirect.c \
+	./execution/HereDoc/heredoc.c ./execution/HereDoc/heredoc_open.c ./execution/HereDoc/heredoc_multiple.c \
+	./execution/HereDoc/heredoc_quotes.c ./execution/HereDoc/heredoc_dollar.c ./execution/HereDoc/expand_heredoc.c \
+	./execution/HereDoc/heredoc_utils.c \
+
 
 OBJS_DIR := objects
 OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)

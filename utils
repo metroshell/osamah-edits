@@ -1,0 +1,55 @@
+void	print_type(t_type type)
+{
+	switch (type)
+	{
+	case COMMAND:
+		printf("COMMAND\n");
+		break ;
+	case ARGUMENT:
+		printf("ARGUMENT\n");
+		break ;
+	case HEREDOC:
+		printf("HEREDOC\n");
+		break ;
+	case APPEND:
+		printf("APPEND\n");
+		break ;
+	case TEXT:
+		printf("TEXT\n");
+		break ;
+	case REDIRECTIN:
+		printf("REDIRECTIN\n");
+		break ;
+	case REDIRECTOUT:
+		printf("REDIRECTOUT\n");
+		break ;
+	case ENDOFFILE:
+		printf("ENDOFFILE\n");
+		break ;
+	case FILENAME:
+		printf("FILENAME\n");
+		break ;
+	}
+}
+
+// test the tokenizer
+void	print_tokens(t_token *arg)
+{
+	t_token	*tmp;
+	int		i;
+
+	tmp = arg;
+	while (tmp)
+	{
+		i = 0;
+		while (tmp->content[i])
+		{
+			printf("argv[%i] = %s , type = ", i, tmp->content[i]);
+			print_type(tmp->type[i]);
+			i++;
+		}
+		tmp = tmp->next;
+		if (tmp)
+			printf("------->%c\n", '|');
+	}
+}

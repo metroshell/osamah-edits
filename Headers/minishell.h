@@ -6,7 +6,7 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/21 20:45:24 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:48:27 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,32 +41,40 @@ typedef struct s_heredoc
 typedef struct s_fds
 {
 	int				fd_in[2];
-	int				fd_out;
+	int				fd_out[2];
 	int				fd_heredoc;
 	int				saved_out;
 	int				saved_in;
 	int				flag_out;
 	int				flag_in;
+	int				flag_append;
 	int				flag_expand;
 	int				flag_heredoc;
+	char			*out_file;
+	char			*in_file;
 	char			**list;
 	char			*temp;
+	char			*delimiter;
+	int				index_i;
+	int				index_j;
+	char			*text;
 }					t_fds;
 
 typedef struct s_execute
 {
-	int index;
-	int	j;
-	int pipes_count;
-	char *cmd;
-	int **pipes;
-	int *pids;
-	int count_rout;
-	int count_rin;
-	int count_append;
-	int flag;
-	
-} t_execute;
+	int				index;
+	int				j;
+	int				pipes_count;
+	char			*cmd;
+	int				**pipes;
+	int				*pids;
+	int				count_rout;
+	int				count_rin;
+	int				count_append;
+	int				flag;
+
+}					t_execute;
+
 typedef struct s_export
 {
 	int				index;
@@ -85,6 +93,7 @@ typedef struct s_parser
 
 typedef struct s_shell
 {
+	char			*cmd;
 	char			**cmd_list;
 	char			**paths;
 	char			*prompt;
@@ -99,6 +108,7 @@ typedef struct s_shell
 	int				echo_flag;
 	int				quote_counter;
 	int				expand_flag;
+	int				fd_out;
 	int				exit_status;
 	t_env			*env;
 	t_execute		*exe;
@@ -135,6 +145,14 @@ typedef struct s_expand
 	int				single_qoute;
 	int				dex;
 }					t_expand;
+
+typedef struct s_quote_state
+{
+	int				index;
+	int				i;
+	int				count;
+	char			quote;
+}					t_quote_state;
 
 // toknizer
 t_token				*tokenizer(t_shell *shell);
@@ -239,14 +257,68 @@ int					redirect_first_arg(t_token *tokens);
 char				**rearrange_list_redirect(t_token *tokens);
 int					is_there_heredoc(t_token *tokens);
 int					create_heredoc_files(t_token *tokens);
+void				execute_cmd_with_path(t_shell *shell, t_token *tokens,
+						t_parser *parser, t_fds *fd);
+void				link_cmd_with_path(t_shell *shell, t_token *tokens,
+						t_fds *fd, t_parser *parser);
+void				exit_cmd_not_found(t_shell *shell, t_token *tokens,
+						t_parser *parser, t_fds *fd);
+void				cleanup_execute_command(t_shell *shell, t_fds *fd);
+void				get_exit_status(int id);
+void				check_files_in_child(t_fds *fd);
+char				**get_env(t_env *env);
+int					count_content(t_token *tokens);
+int					how_many_pipes(t_token *tokens);
+int					redirect_first_arg(t_token *tokens);
+int					is_there_redirect(t_token *tokens);
+int					is_there_command(t_token *tokens);
+int					is_there_heredoc(t_token *tokens);
+void				path_check(t_shell *shell, t_token *tokens);
+void				cmd_check(t_shell *shell);
+int					counter(t_token *tokens);
+void				child_process(t_shell *shell, t_token *tokens);
+void				cmd_not_found(t_shell *shell);
+void				exit_execute(t_shell *shell, t_token *tokens);
+char				**list(t_token *tokens);
+void				normal_execute(t_shell *shell, t_token *tokens);
+void				ctrl_d(t_shell *shell);
+void				free_loop(t_shell *shell, t_token *tokens,
+						t_parser *parser);
 
-//redirections
-void    handle_redirectout(t_shell *shell,t_token *tokens,int x);
-int is_there_redirectin(t_token *tokens);
-int is_there_append(t_token *tokens);
-int is_there_redirectout(t_token *tokens);
-void    handle_append(t_shell *shell,t_token *tokens,int x);
-void    handle_redirectin(t_shell *shell,t_token *tokens,int x);
+// redirections
+int					is_there_redirectin(t_token *tokens);
+int					is_there_append(t_token *tokens);
+int					is_there_redirectout(t_token *tokens);
+void				handle_redirectout(t_shell *shell, t_token *tokens, int x);
+void				handle_append(t_shell *shell, t_token *tokens, int x);
+void				handle_redirectin(t_shell *shell, t_token *tokens, int x);
+void				dup_in(t_fds *fd, int *j);
+void				dup_out(t_fds *fd, int *j);
+void				restore_in_out(t_fds *fd);
+int					redirect(char **lst, t_shell *shell, t_fds *fd);
+int					redirections(char **lst, int *i);
+int					open_appendfiles(t_fds *fd, char **lst, int *i, int *j);
+int					open_redirect_out(t_fds *fd, char **lst);
+int					open_redirect_in(t_fds *fd, char **lst);
+int					open_outfiles(t_fds *fd, char **lst, int *i, int *j);
+int					open_infiles(t_fds *fd, char **lst, int *i, int *j);
+char				**open_files(char **lst, t_token *tokens, t_fds *fd,
+						t_shell *shell);
 
+// heredoc
+void				heredoc_handle(t_token *tokens, t_shell *shell);
+int					count_heredoc(t_token *tokens);
+void				herdoc_ctrl_d(char *text, char *exit_heredoc);
+int					open_heredocs(t_shell *shell, char *exit_heredoc,
+						char *file);
+int					create_heredoc_files(t_token *tokens);
+char				*remove_qoutes(char *string, t_shell *shell);
+char				*expand_heredoc(char *text, t_shell *shell);
+void				dollar(char *text, t_shell *shell, char *temp, int *i);
+int					length(char *text, t_shell *shell);
+void				heredoc_ctrl_d(char *text, char *exit_heredoc);
+void				handle_heredoc_child(void);
+void				open_file(t_fds *fds, int j);
+void				heredoc_signal_handler(int sig);
 
 #endif

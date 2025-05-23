@@ -6,374 +6,101 @@
 /*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 11:05:04 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/21 00:02:14 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:26:33 by oalananz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	qoutes_counter(char *string)
+static void	child(t_fds *fds, t_shell *shell, char *delimiter, int j)
 {
-	int count;
-    int index;
-    char quote;
-	
-	count = 0;
-    index = 0;
-    quote = '\0';
-	while(string[index])
+	if (delimiter[0] == '\'' || delimiter[0] == '\"')
+		delimiter = remove_qoutes(delimiter, shell);
+	while (1)
 	{
-		if(string[index] == '\'' || string[index] == '\"')
+		fds->text = readline("> ");
+		if (!fds->text)
 		{
-			quote = string[index];
-			count++;
-			index++;
-			break ;
+			close(fds->fd_in[j]);
+			heredoc_ctrl_d(fds->text, delimiter);
 		}
-		index++;
-	}
-	while (string[index])
-	{
-		if(count % 2 == 0)
+		if (!shell->expand_flag)
+			fds->text = expand_heredoc(fds->text, shell);
+		if (!ft_strcmp(fds->text, delimiter))
 		{
-			while(string[index])
+			free(fds->text);
+			free(delimiter);
+			close(fds->fd_in[j]);
+			exit(0);
+		}
+		write(fds->fd_in[j], fds->text, ft_strlen(fds->text));
+		write(fds->fd_in[j], "\n", 1);
+		free(fds->text);
+	}
+	free(delimiter);
+}
+
+static void	parent(pid_t pid, t_shell *shell, struct sigaction original_sa)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	sigaction(SIGINT, &original_sa, NULL);
+	if (WIFEXITED(status))
+	{
+		shell->exit_status = WEXITSTATUS(status);
+		if (shell->exit_status == 128 + SIGINT)
+			return ;
+	}
+	else if (WIFSIGNALED(status))
+	{
+		shell->exit_status = 128 + WTERMSIG(status);
+		return ;
+	}
+}
+
+static void	handle_heredoc_loop(t_shell *shell, char **lst, t_fds *fds,
+		struct sigaction original_sa)
+{
+	pid_t	pid;
+
+	fds->index_i = 0;
+	fds->index_j = 0;
+	while (lst[fds->index_i])
+	{
+		if (!ft_strcmp(lst[fds->index_i], "<<"))
+		{
+			fds->index_i++;
+			open_file(fds, fds->index_j);
+			pid = fork();
+			if (pid == 0)
 			{
-				if(string[index] == '\'' || string[index] == '\"')
-				{
-					quote = string[index];
-					count++;
-					index++;
-					break ;
-				}
-				index++;
+				fds->delimiter = ft_strdup(lst[fds->index_i]);
+				if (!fds->delimiter)
+					exit(1);
+				handle_heredoc_child();
+				child(fds, shell, fds->delimiter, fds->index_j);
 			}
+			else if (pid > 0)
+				parent(pid, shell, original_sa);
+			fds->index_j++;
 		}
-		if (string[index] == quote)
-			count++;
-		index++;
-	}
-	return(count);
-}
-
-char *remove_qoutes(char *string, t_shell *shell)
-{
-	char	*temp;
-	int		i;
-	int count;
-    int index;
-    char quote; 
-
-	// printf("quotes count = %d\n" ,count_quotes(string));
-	temp = malloc(ft_strlen(string) - qoutes_counter(string) + 1);
-	if(!temp)
-		exit(123);
-	index = 0;
-	i = 0;
-	count = 0;
-	shell->expand_flag = 1;
-	quote = '\0';
-	while(string[index])
-	{
-		if(string[index] == '\'' || string[index] == '\"')
-		{
-			quote = string[index];
-			count++;
-			index++;
-			break ;
-		}
-		else
-			temp[i++] = string[index++];
-	}
-	while (string[index])
-	{
-		if(count % 2 == 0)
-		{
-			while(string[index])
-			{
-				if(string[index] == '\'' || string[index] == '\"')
-				{
-					quote = string[index];
-					count++;
-					index++;
-					break ;
-				}
-				temp[i++] = string[index++];
-			}
-		}
-		if (string[index] == quote)
-		{
-			count++;
-			index++;
-		}
-		else
-			temp[i++] = string[index++];
-	}
-	temp[i] = '\0';
-	free(string);
-	return (temp);
-}
-
-static void	dollar(char *text,t_shell *shell,char *temp,int *i)
-{
-	t_env *current;
-
-	int count = 0;
-	shell->temp_index++;
-	if(text[shell->temp_index] == ' ' || text[shell->temp_index] == '\0')
-		temp[(*i)++] = '$';
-	if(ft_isdigit(text[shell->temp_index]) && text[shell->temp_index] == '0')
-	{
-		char *digit = ft_strdup("ARSSH");
-		shell->temp_index++;
-		while(digit[count])
-			temp[(*i)++] = digit[count++];
-		free(digit);
-	}
-	else if(ft_isdigit(text[shell->temp_index]))
-		shell->temp_index++;
-	else
-	{
-		while(text[shell->temp_index] && (ft_isalpha(text[shell->temp_index]) || text[shell->temp_index] == '_'))
-		{
-			shell->temp_index++;
-			count++;
-		}
-		shell->variable = ft_substr(text,shell->temp_index - count,count);
-		current = shell->env;
-		while (current)
-		{
-			if (ft_strcmp(current->variable, shell->variable) == 0)
-			{
-				int index = 0;
-				while(current->content[index])
-					temp[(*i)++] = current->content[index++];
-				free(shell->variable);
-				shell->variable = NULL;
-				return ;
-			}
-			current = current->next;
-		}
-		free(shell->variable);
-		shell->variable = NULL;
+		fds->index_i++;
 	}
 }
 
-int		length(char *text ,t_shell *shell)
+void	open_heredoc(t_shell *shell, char **lst, t_fds *fds)
 {
-	t_env	*current;
+	struct sigaction	sa;
+	struct sigaction	original_sa;
 
-	int count = 0;
-	shell->temp_index++;
-	if(text[shell->temp_index] == ' ' || text[shell->temp_index] == '\0')
-		count++;
-	else if(text[shell->temp_index] == '0')
-	{
-		shell->temp_index++;
-		count += 5;
-	}
-	else if(ft_isdigit(text[shell->temp_index]))
-		shell->temp_index++;
-	else
-	{
-		while(text[shell->temp_index] && (ft_isalpha(text[shell->temp_index]) || text[shell->temp_index] == '_'))
-		{
-			shell->temp_index++;
-			count++;
-		}
-		shell->variable = ft_substr(text,shell->temp_index - count,count);
-		current = shell->env;
-		while (current)
-		{
-			if (ft_strcmp(current->variable, shell->variable) == 0)
-			{
-				count = ft_strlen(current->content);
-				return (count);
-			}
-			current = current->next;
-		}
-	}
-	return (count - ft_strlen(shell->variable));
-}
-
-int		string_len(char *text ,t_shell *shell)
-{
-	shell->temp_index = 0;
-	int size = 0;
-	if (!text)
-    	return (0);
-	while(shell->temp_index < (int)ft_strlen(text) && text[shell->temp_index])
-	{
-		if(text[shell->temp_index] == '$')
-		{
-			size += length(text,shell);
-			free(shell->variable);
-			shell->variable = NULL;
-		}
-		else
-		{
-			shell->temp_index++;
-			size++;
-		}
-	}
-	shell->temp_index = 0;
-	return (size);
-}
-
-char	*expand_heredoc(char *text, t_shell *shell) // expand $ in all cases ('', "", )
-{
-	char	*temp;
-	int		i;
-	int		x;
-
-	x = string_len(text,shell);
-	if((int)ft_strlen(text) == x)
-		return (text);
-	temp = malloc(x + 1);
-	if(!temp)
-		exit(130);
-	i = 0;
-	while(text[shell->temp_index])
-	{
-		if(text[shell->temp_index] == '$')
-			dollar(text,shell,temp,&i);
-		else
-			temp[i++] = text[shell->temp_index++];
-	}
-	temp[i] = '\0';
-	free(text);
-	return (temp);
-}
-
-
-int	check_text(char *text, t_shell *shell)
-{
-	t_env	*temp;
-	// char	*temp_text;
-	// int			i;
-
-	temp = shell->env;
-	while (temp)
-	{
-		if (!ft_strcmp(text, temp->variable))
-			return (1);
-		temp = temp->next;
-	}
-	return (0);
-}
-
-static void heredoc_signal_handler(int sig)
-{
-    (void)sig;
-    rl_redisplay();
-    write(1, "\n", 1);
-	rl_on_new_line();
-	unlink(".temp");
-    exit(128 + SIGINT);
-}
-
-void    open_heredoc(t_shell *shell, char **lst, t_fds *fds)
-{
-    int         i;
-    int         j;
-    char        *delimiter;
-    char        *text;
-    pid_t       pid;
-    int         status;
-    struct sigaction sa;
-
-    delimiter = NULL;
-    i = 0;
-    fds->temp = ft_strdup(".temp");
-    j = 0;
-    fds->flag_expand = 1;
-
-    struct sigaction original_sa;
-    sigaction(SIGINT, NULL, &original_sa);
-    sa.sa_handler = SIG_IGN;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGINT, &sa, NULL);
-
-    while (lst[i])
-    {
-        if (!ft_strcmp(lst[i], "<<"))
-        {
-            i++;
-            pid = fork();
-            if (pid == 0)
-            {
-                sa.sa_handler = heredoc_signal_handler;
-                sa.sa_flags = 0;
-                sigemptyset(&sa.sa_mask);
-                sigaction(SIGINT, &sa, NULL);
-
-                fds->fd_in[j] = open(fds->temp, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-                if (fds->fd_in[j] < 0)
-                    exit(1);
-
-                delimiter = ft_strdup(lst[i]);
-                if (!delimiter)
-                    exit(1);
-                if (delimiter[0] == '\'' || delimiter[0] == '\"')
-                    delimiter = remove_qoutes(delimiter, shell);
-
-                while (1)
-                {
-                    text = readline("> ");
-                    if (!text)
-                    {
-                        char *tmp = ft_strjoin("ARSSH: warning: here-document delimited by end-of-file ( wanted `", delimiter);
-                        char *t = ft_strjoin(tmp, "\')\n");
-                        free(tmp);
-                        write(1, t, ft_strlen(t));
-                        free(t);
-                        free(delimiter);
-                        close(fds->fd_in[j]);
-						unlink(".temp");
-                        exit(0);
-                    }
-
-                    if (shell->expand_flag)
-                        text = expand_heredoc(text, shell);
-
-                    if (!ft_strcmp(text, delimiter))
-                    {
-                        free(text);
-                        free(delimiter);
-                        close(fds->fd_in[j]);
-                        exit(0);
-                    }
-
-                    write(fds->fd_in[j], text, ft_strlen(text));
-                    write(fds->fd_in[j], "\n", 1);
-                    free(text);
-                }
-                free(delimiter);
-            }
-            else if (pid > 0)
-            {
-                waitpid(pid, &status, 0);
-                sigaction(SIGINT, &original_sa, NULL);
-                if (WIFEXITED(status))
-                {
-                    shell->exit_status = WEXITSTATUS(status);
-                    if (shell->exit_status == 128 + SIGINT)
-                        return;
-                }
-                else if (WIFSIGNALED(status))
-                {
-                    shell->exit_status = 128 + WTERMSIG(status);
-                    return;
-                }
-            }
-            else
-            {
-                perror("fork");
-                exit(EXIT_FAILURE);
-            }
-            j++;
-        }
-        i++;
-    }
-    fds->flag_heredoc = 1;
+	fds->temp = ft_strdup(".temp");
+	fds->flag_expand = 1;
+	sigaction(SIGINT, NULL, &original_sa);
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
+	handle_heredoc_loop(shell, lst, fds, original_sa);
+	fds->flag_heredoc = 1;
 }
