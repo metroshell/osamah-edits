@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:13:01 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:19:42 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 18:10:36 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	handle_heredoc_child(void)
 	sa.sa_handler = heredoc_signal_handler;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGINT, &sa,NULL);
 }
 
 void	open_file(t_fds *fds, int j)

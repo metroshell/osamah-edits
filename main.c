@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 11:00:55 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 15:22:24 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	start_minishell(t_shell *shell)
 	parser = ft_calloc(1, sizeof(t_parser));
 	if (!parser)
 		exit(EXIT_FAILURE);
-	if (tokens)
+	if (tokens)shell->exit_status = 0;
 	{
 		ft_parser(tokens, parser, shell);
 		if (shell->paths)

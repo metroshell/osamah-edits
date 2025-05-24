@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_dollar.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:27:50 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/20 19:14:42 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 15:19:11 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand,
 	{
 		count = 0;
 		tmp = ft_itoa(shell->exit_status);
+		shell->exit_status =0;
 		expand->in++;
 		while (tmp[count])
 			temp[expand->dex++] = tmp[count++];

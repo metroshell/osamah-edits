@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 12:24:15 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 15:53:59 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,20 @@ typedef struct s_fds
 	pid_t			pid;
 }					t_fds;
 
+typedef enum s_type
+{
+	TEXT,
+	FILENAME,
+	COMMAND,
+	ARGUMENT,
+	HEREDOC,
+	APPEND,
+	REDIRECTOUT,
+	REDIRECTIN,
+	ENDOFFILE
+}					t_type;
+
+
 typedef struct s_execute
 {
 	int				index;
@@ -92,6 +106,15 @@ typedef struct s_parser
 	int				eof_flag;
 }					t_parser;
 
+
+typedef struct s_token
+{
+	char			*heredoc_file;
+	t_type			*type;
+	char			**content;
+	struct s_token	*next;
+}					t_token;
+
 typedef struct s_shell
 {
 	char			*cmd;
@@ -113,28 +136,9 @@ typedef struct s_shell
 	int				exit_status;
 	t_env			*env;
 	t_execute		*exe;
+	t_token			*head;
 }					t_shell;
 
-typedef enum s_type
-{
-	TEXT,
-	FILENAME,
-	COMMAND,
-	ARGUMENT,
-	HEREDOC,
-	APPEND,
-	REDIRECTOUT,
-	REDIRECTIN,
-	ENDOFFILE
-}					t_type;
-
-typedef struct s_token
-{
-	char			*heredoc_file;
-	t_type			*type;
-	char			**content;
-	struct s_token	*next;
-}					t_token;
 
 typedef struct s_expand
 {
@@ -247,14 +251,12 @@ void				execute_multiple(t_token *tokens, t_shell *shell);
 char				**get_env(t_env *env);
 char				**create_list(t_token *tokens, t_fds *fd, t_shell *shell);
 int					how_many_pipes(t_token *tokens);
-char				**rearrange_list(t_token *tokens);
 int					is_there_redirect(t_token *tokens);
 char				*expand_heredoc(char *text, t_shell *shell);
 char				*remove_qoutes(char *string, t_shell *shell);
 int					is_there_command(t_token *tokens);
-char				**rearrange_list(t_token *tokens);
+void				rearrange_list(t_token *tokens, t_shell *shell);
 int					redirect_first_arg(t_token *tokens);
-char				**rearrange_list_redirect(t_token *tokens);
 int					is_there_heredoc(t_token *tokens);
 int					create_heredoc_files(t_token *tokens);
 void				execute_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd);
@@ -262,7 +264,7 @@ void				link_cmd_with_path(t_shell *shell, t_token *tokens,
 						t_fds *fd);
 void				exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd);
 void				cleanup_execute_command(t_shell *shell, t_fds *fd);
-void				get_exit_status(int id);
+void				get_exit_status(int id, t_shell *shell);
 void				check_files_in_child(t_fds *fd);
 char				**get_env(t_env *env);
 int					count_content(t_token *tokens);
@@ -313,9 +315,10 @@ char				*remove_qoutes(char *string, t_shell *shell);
 char				*expand_heredoc(char *text, t_shell *shell);
 void				dollar(char *text, t_shell *shell, char *temp, int *i);
 int					length(char *text, t_shell *shell);
-void				heredoc_ctrl_d(char *text, char *exit_heredoc);
+void				heredoc_ctrl_d(char *text, char *exit_heredoc, t_shell *shell, t_fds *fd);
 void				handle_heredoc_child(void);
 void				open_file(t_fds *fds, int j);
 void				heredoc_signal_handler(int sig);
+void				free_heredoc(t_shell *shell, t_fds *fd);
 
 #endif

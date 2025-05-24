@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_list.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:30:22 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 20:21:31 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 16:01:32 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,16 @@ static void	list_write(t_token *temp, int j, char **lst)
 	lst[j] = NULL;
 }
 
-char	**rearrange_list_redirect(t_token *tokens)
+void	rearrange_list_redirect(t_token *tokens, t_shell *shell)
 {
 	t_token	*temp;
-	char	**lst;
 	int		i;
 
 	i = 0;
 	temp = tokens;
-	lst = malloc((count_content(tokens) + 1) * sizeof(char *));
-	if (!lst)
-		return (NULL);
+	shell->cmd_list = malloc((count_content(tokens) + 1) * sizeof(char *));
+	if (!shell->cmd_list)
+		return ;
 	while (temp->content[i])
 	{
 		if (temp->type[i] == REDIRECTIN || temp->type[i] == REDIRECTOUT
@@ -70,52 +69,47 @@ char	**rearrange_list_redirect(t_token *tokens)
 		else
 			break ;
 	}
-	list_write(temp, list_utils(temp, i, lst), lst);
-	return (lst);
+	list_write(temp, list_utils(temp, i, shell->cmd_list), shell->cmd_list);
 }
 
-char	**rearrange_list(t_token *tokens)
+void	rearrange_list(t_token *tokens, t_shell *shell)
 {
-	char	**list;
 	t_token	*temp;
 	int		i;
 
 	temp = tokens;
 	i = 0;
-	list = malloc((count_content(tokens) + 1) * sizeof(char *));
-	if (!list)
-		return (NULL);
+	shell->cmd_list = malloc((count_content(tokens) + 1) * sizeof(char *));
+	if (!shell->cmd_list)
+		return ;
 	while (temp->content[i])
 	{
 		if (temp->content[i])
-			list[i] = ft_strdup(temp->content[i]);
+			shell->cmd_list[i] = ft_strdup(temp->content[i]);
 		else
-			list[i] = NULL;
-		if (!list[i])
-			return (NULL);
+			shell->cmd_list[i] = NULL;
+		if (!shell->cmd_list[i])
+			return ;
 		i++;
 	}
-	list[i] = NULL;
-	i = 0;
-	return (list);
+	shell->cmd_list[i] = NULL;
 }
 
 char	**create_list(t_token *tokens, t_fds *fd, t_shell *shell)
 {
-	char	**lst;
 	char	**redirect_lst;
 
 	if (redirect_first_arg(tokens))
-		lst = rearrange_list_redirect(tokens);
+		rearrange_list_redirect(tokens, shell);
 	else
-		lst = rearrange_list(tokens);
+		rearrange_list(tokens, shell);
 	if (is_there_redirect(tokens))
 	{
-		redirect_lst = open_files(lst, tokens, fd, shell);
+		redirect_lst = open_files(shell->cmd_list, tokens, fd, shell);
 		if (!redirect_lst)
 		{
-			if (lst)
-				ft_free_2d(lst);
+			if (shell->cmd_list)
+				ft_free_2d(shell->cmd_list);
 			if (fd->saved_in)
 				close(fd->saved_in);
 			if (fd->saved_out)
@@ -126,5 +120,5 @@ char	**create_list(t_token *tokens, t_fds *fd, t_shell *shell)
 		return (redirect_lst);
 	}
 	else
-		return (lst);
+		return (shell->cmd_list);
 }

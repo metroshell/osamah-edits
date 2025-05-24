@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_open.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:40:04 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:12:25 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 17:51:23 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	count_heredoc(t_token *tokens)
 	return (counter);
 }
 
-void	heredoc_ctrl_d(char *text, char *exit_heredoc)
+void	heredoc_ctrl_d(char *text, char *exit_heredoc, t_shell *shell, t_fds *fd)
 {
 	char	*tmp;
 	char	*t;
@@ -44,8 +44,7 @@ void	heredoc_ctrl_d(char *text, char *exit_heredoc)
 	free(t);
 	free(text);
 	free(exit_heredoc);
-	if (!access(".temp", F_OK))
-		unlink(".temp");
+	free_heredoc(shell, fd);
 	exit(0);
 }
 
@@ -62,7 +61,7 @@ int	open_heredocs(t_shell *shell, char *exit_heredoc, char *file)
 	{
 		text = readline("> ");
 		if (!text)
-			heredoc_ctrl_d(text, exit_heredoc);
+			heredoc_ctrl_d(text, exit_heredoc, shell, NULL);
 		if (shell->expand_flag)
 			text = expand_heredoc(text, shell);
 		if (text && exit_heredoc && !ft_strcmp(text, exit_heredoc))

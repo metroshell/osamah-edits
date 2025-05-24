@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/24 12:32:36 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 18:07:45 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ int	execute_built_in(t_shell *shell, t_token *tokens, t_fds *fd)
 
 void	execute_child(t_shell *shell, t_token *tokens, t_fds *fd)
 {
-	g_exit_status = 0;
+	shell->exit_status = 0;
+	// g_exit_status = 0;
 	check_files_in_child(fd);
 	get_paths(shell);
 	if (!shell->paths)
@@ -88,7 +89,7 @@ void	execute_command(t_token *tokens, t_shell *shell)
 	if (id == 0)
 		execute_child(shell, tokens, fd);
 	signal(SIGINT, SIG_IGN);
-	get_exit_status(id);
+	get_exit_status(id, shell);
 	cleanup_execute_command(shell, fd);
 }
 

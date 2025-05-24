@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:43:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 10:55:52 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 18:09:38 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,15 +74,15 @@ void	cleanup_execute_command(t_shell *shell, t_fds *fd)
 	}
 }
 
-void	get_exit_status(int id)
+void	get_exit_status(int id, t_shell *shell)
 {
 	int	status;
 
 	waitpid(id, &status, 0);
 	if (WIFEXITED(status))
-		g_exit_status = WEXITSTATUS(status);
+		shell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
-		g_exit_status = 128 + WTERMSIG(status);
+		shell->exit_status = 128 + WTERMSIG(status);
 }
 
 void	check_files_in_child(t_fds *fd)
@@ -90,6 +90,8 @@ void	check_files_in_child(t_fds *fd)
 	int	fds;
 
 	fds = 0;
+	if (fd->flag_heredoc && access(".temp", F_OK))
+		exit(130);
 	if (fd->flag_heredoc)
 	{
 		fds = open(fd->temp, O_RDONLY);

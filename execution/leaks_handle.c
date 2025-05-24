@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   leaks_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:47:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 11:10:20 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 15:49:23 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	exit_execution(t_shell *shell, t_token *tokens)
 {
 	if (tokens)
 	{
-		free_tokenizer(tokens);
+		free_tokenizer(shell->head);
 		tokens = NULL;
 	}
 	if (shell && shell->exe && shell->exe->cmd)
@@ -83,23 +83,7 @@ void	exit_execution(t_shell *shell, t_token *tokens)
 	}
 }
 
-void	exit_execute(t_shell *shell, t_token *tokens)
-{
-	if (tokens)
-		free_tokenizer(tokens);
-	if (shell && shell->exe && shell->exe->pipes)
-		ft_free_int2d(shell->exe->pipes, shell);
-	if (shell && shell->enviroment)
-		ft_free_2d(shell->enviroment);
-	if (shell && shell->env)
-		free_env(shell->env);
-	if (shell && shell->paths)
-		ft_free_2d(shell->paths);
-	if (shell && shell->cmd_list)
-		ft_free_2d(shell->cmd_list);
-	// if (shell)
-	// 	free(shell);
-}
+
 
 void	cmd_not_found(t_shell *shell)
 {

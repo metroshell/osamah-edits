@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 11:05:04 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/24 12:24:46 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 16:21:31 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_heredoc(t_shell *shell, t_fds *fd)
+{
+	if (shell && shell->head)
+		free_tokenizer(shell->head);
+	if (shell->cmd_list)
+		ft_free_2d(shell->cmd_list);
+	if (shell->env)
+		free_env(shell->env);
+	if (shell && shell->enviroment)
+		ft_free_2d(shell->enviroment);
+	if (shell)
+		free(shell);
+	if (fd && fd->temp)
+		free(fd->temp);
+	if (fd)
+		free(fd);
+}
 
 static void	child(t_fds *fds, t_shell *shell, char *delimiter, int j)
 {
@@ -22,7 +40,7 @@ static void	child(t_fds *fds, t_shell *shell, char *delimiter, int j)
 		if (!fds->text)
 		{
 			close(fds->fd_in[j]);
-			heredoc_ctrl_d(fds->text, delimiter);
+			heredoc_ctrl_d(fds->text, delimiter, shell, fds);
 		}
 		if (!shell->expand_flag)
 			fds->text = expand_heredoc(fds->text, shell);
@@ -31,6 +49,7 @@ static void	child(t_fds *fds, t_shell *shell, char *delimiter, int j)
 			free(fds->text);
 			free(delimiter);
 			close(fds->fd_in[j]);
+			free_heredoc(shell, fds);
 			exit(0);
 		}
 		write(fds->fd_in[j], fds->text, ft_strlen(fds->text));

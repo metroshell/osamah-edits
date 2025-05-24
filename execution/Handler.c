@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 11:47:55 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/24 14:15:24 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,9 @@ void	execute_multiple(t_token *tokens, t_shell *shell)
 		if (shell->exe->pids[shell->exe->index] == last_pid)
 		{
 			if (WIFEXITED(status))
-			shell->exit_status = WEXITSTATUS(status);
+				shell->exit_status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
-			shell->exit_status = 128 + WTERMSIG(status);
+				shell->exit_status = 128 + WTERMSIG(status);
 		}
 	}
 	if (shell && shell->exe && shell->exe->pipes)
