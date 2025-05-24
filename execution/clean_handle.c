@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   clean_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:43:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:44:39 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 10:55:52 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	link_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd,
-		t_parser *parser)
+void	link_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd)
 {
 	int	j;
 
@@ -30,12 +29,11 @@ void	link_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd,
 		j++;
 	}
 	if (!shell->cmd)
-		exit_cmd_not_found(shell, tokens, parser, fd);
+		exit_cmd_not_found(shell, tokens, fd);
 	free(fd);
 }
 
-void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_parser *parser,
-		t_fds *fd)
+void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd)
 {
 	char	*temp;
 	char	*string;
@@ -48,7 +46,7 @@ void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_parser *parser,
 		write(2, string, ft_strlen(string));
 		free(string);
 		free(fd);
-		exit_execution(shell, tokens, parser);
+		exit_execution(shell, tokens);
 		exit(126);
 	}
 	temp = ft_strjoin("command not found: ", shell->cmd_list[0]);
@@ -57,7 +55,7 @@ void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_parser *parser,
 	write(2, string, ft_strlen(string));
 	free(string);
 	free(fd);
-	exit_execution(shell, tokens, parser);
+	exit_execution(shell, tokens);
 	exit(127);
 }
 

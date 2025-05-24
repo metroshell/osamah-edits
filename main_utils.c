@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 20:47:51 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 20:48:05 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 11:12:42 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,20 @@ void	ctrl_d(t_shell *shell)
 	if (shell->env)
 		free_env(shell->env);
 	x = shell->exit_status;
-	free(shell);
+	if (shell)
+	{
+		free(shell);
+		shell = NULL;
+	}
 	exit(x);
 }
 
-void	free_loop(t_shell *shell, t_token *tokens, t_parser *parser)
+void	free_loop(t_shell *shell, t_token *tokens)
 {
 	if (tokens)
-		execute(shell, tokens, parser);
-	if (shell->prompt)
+		execute(shell, tokens);
+	if (shell && shell->prompt)
 		free(shell->prompt);
-	if (parser)
-		free(parser);
 	if (tokens)
 		free_tokenizer(tokens);
 }

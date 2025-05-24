@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 16:03:27 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/20 19:31:05 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 00:42:50 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	check_filename(t_shell *shell)
 		|| shell->prompt[shell->prompt_index] == '|' )
 	{
 		shell->token_flag = 1;
-		printf("qais\n");
 		printf("arssh: syntax error near unexpected token `newline'\n");
 	}
 }

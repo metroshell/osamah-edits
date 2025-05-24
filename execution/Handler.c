@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:49:43 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 11:47:55 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	normal_execute(t_shell *shell, t_token *tokens)
 					close(shell->exe->pipes[shell->exe->j][1]);
 				shell->exe->j++;
 			}
-			exit_execute(shell, tokens);
+			exit_execution(shell, tokens);
 			exit(127);
 		}
 	}
@@ -64,11 +64,14 @@ void	exec_init(t_token *tokens, t_shell *shell)
 
 void	exec_commands(t_token *tokens, t_shell *shell)
 {
-	while (tokens)
+	t_token *temp;
+
+	temp = tokens;
+	while (temp)
 	{
-		child_process(shell, tokens);
+		child_process(shell, temp);
 		signal(SIGINT, SIG_IGN);
-		tokens = tokens->next;
+		temp = temp->next;
 		free(shell->cmd_list);
 		shell->cmd_list = NULL;
 		shell->exe->index++;
@@ -92,7 +95,7 @@ void	execute_multiple(t_token *tokens, t_shell *shell)
 	if (!shell->exe)
 		return ;
 	exec_init(tokens, shell);
-	shell->exe->pids = malloc(sizeof(int) * shell->exe->pipes_count + 1);
+	shell->exe->pids = malloc(sizeof(int) * (shell->exe->pipes_count + 2));
 	if (!shell->exe->pids)
 		return ;
 	create_heredoc_files(tokens);
@@ -105,9 +108,15 @@ void	execute_multiple(t_token *tokens, t_shell *shell)
 		if (shell->exe->pids[shell->exe->index] == last_pid)
 		{
 			if (WIFEXITED(status))
-				shell->exit_status = WEXITSTATUS(status);
+			shell->exit_status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
-				shell->exit_status = 128 + WTERMSIG(status);
+			shell->exit_status = 128 + WTERMSIG(status);
 		}
 	}
+	if (shell && shell->exe && shell->exe->pipes)
+		ft_free_int2d(shell->exe->pipes, shell);
+	if (shell && shell->exe && shell->exe->pids)
+		free(shell->exe->pids);
+	if (shell && shell->exe)
+		free (shell->exe);
 }

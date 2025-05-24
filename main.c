@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 20:47:39 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 11:00:55 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,10 @@ void	start_minishell(t_shell *shell)
 			ft_free_2d(shell->paths);
 			shell->paths = NULL;
 		}
+		free(parser);
 		ft_expander(shell, tokens);
 	}
-	free_loop(shell, tokens, parser);
+	free_loop(shell, tokens);
 }
 
 void	init_minishell(t_shell *shell)
@@ -103,7 +104,7 @@ void	init_minishell(t_shell *shell)
 			start_minishell(shell);
 		else
 			exit(0);
-		if (shell->enviroment)
+		if (shell && shell->enviroment)
 		{
 			ft_free_2d(shell->enviroment);
 			shell->enviroment = NULL;

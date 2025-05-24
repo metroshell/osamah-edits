@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 11:05:04 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/23 19:26:33 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 12:24:46 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ static void	parent(pid_t pid, t_shell *shell, struct sigaction original_sa)
 static void	handle_heredoc_loop(t_shell *shell, char **lst, t_fds *fds,
 		struct sigaction original_sa)
 {
-	pid_t	pid;
-
 	fds->index_i = 0;
 	fds->index_j = 0;
 	while (lst[fds->index_i])
@@ -72,17 +70,19 @@ static void	handle_heredoc_loop(t_shell *shell, char **lst, t_fds *fds,
 		{
 			fds->index_i++;
 			open_file(fds, fds->index_j);
-			pid = fork();
-			if (pid == 0)
+			fds->pid = fork();
+			if (fds->pid == 0)
 			{
 				fds->delimiter = ft_strdup(lst[fds->index_i]);
 				if (!fds->delimiter)
 					exit(1);
 				handle_heredoc_child();
 				child(fds, shell, fds->delimiter, fds->index_j);
+				close(fds->fd_in[0]);
 			}
-			else if (pid > 0)
-				parent(pid, shell, original_sa);
+			else if (fds->pid > 0)
+				parent(fds->pid, shell, original_sa);
+			close(fds->fd_in[0]);
 			fds->index_j++;
 		}
 		fds->index_i++;

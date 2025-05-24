@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   leaks_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:47:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:59:17 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 11:10:20 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free_int2d(int **x)
+void	ft_free_int2d(int **x, t_shell *shell)
 {
 	int	i;
 
 	i = 0;
-	while (x[i])
+	while (i < shell->exe->pipes_count)
 	{
-		if (x[i] != NULL)
+		if (x[i])
 		{
 			free(x[i]);
 		}
@@ -29,42 +29,76 @@ void	ft_free_int2d(int **x)
 	x = NULL;
 }
 
-void	exit_execution(t_shell *shell, t_token *tokens, t_parser *parser)
+void	exit_execution(t_shell *shell, t_token *tokens)
 {
 	if (tokens)
+	{
 		free_tokenizer(tokens);
-	if (shell->enviroment)
-		ft_free_2d(shell->enviroment);
-	if (shell->env)
-		free_env(shell->env);
-	if (shell->cmd_list)
-		ft_free_2d(shell->cmd_list);
-	if (shell->exe->cmd)
+		tokens = NULL;
+	}
+	if (shell && shell->exe && shell->exe->cmd)
+	{
 		free(shell->exe->cmd);
-	if (shell->exe->pids)
+		shell->exe->cmd = NULL;
+	}
+	if (shell && shell->enviroment)
+	{
+		ft_free_2d(shell->enviroment);
+		shell->enviroment = NULL;
+	}
+	if (shell && shell->env)
+	{
+		free_env(shell->env);
+		shell->env = NULL;
+	}
+	if (shell && shell->cmd_list)
+	{
+		ft_free_2d(shell->cmd_list);
+		shell->cmd_list = NULL;
+	}
+	if (shell && shell->exe && shell->exe->pids)
+	{
 		free(shell->exe->pids);
-	if (shell->exe->pipes)
-		ft_free_int2d(shell->exe->pipes);
-	if (shell->exe)
+		shell->exe->pids = NULL;
+	}
+	if (shell && shell->exe && shell->exe->pipes)
+	{
+		ft_free_int2d(shell->exe->pipes, shell);
+		shell->exe->pipes = NULL;
+	}
+	if (shell && shell->exe)
+	{
 		free(shell->exe);
+		shell->exe = NULL;
+	}
+	if (shell && shell->paths)
+	{
+		ft_free_2d(shell->paths);
+		shell->paths = NULL;
+	}
 	if (shell)
+	{
 		free(shell);
-	if (parser)
-		free(parser);
+		shell = NULL;
+	}
 }
 
 void	exit_execute(t_shell *shell, t_token *tokens)
 {
 	if (tokens)
 		free_tokenizer(tokens);
-	if (shell->enviroment)
+	if (shell && shell->exe && shell->exe->pipes)
+		ft_free_int2d(shell->exe->pipes, shell);
+	if (shell && shell->enviroment)
 		ft_free_2d(shell->enviroment);
-	if (shell->env)
+	if (shell && shell->env)
 		free_env(shell->env);
-	if (shell->cmd_list)
+	if (shell && shell->paths)
+		ft_free_2d(shell->paths);
+	if (shell && shell->cmd_list)
 		ft_free_2d(shell->cmd_list);
-	if (shell)
-		free(shell);
+	// if (shell)
+	// 	free(shell);
 }
 
 void	cmd_not_found(t_shell *shell)

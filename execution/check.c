@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:49:57 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:58:19 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/24 12:29:54 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	path_check(t_shell *shell, t_token *tokens)
 	if (!shell->paths)
 	{
 		cmd_not_found(shell);
-		exit_execute(shell, tokens);
+		exit_execution(shell, tokens);
 		exit(127);
 	}
 	if (!shell->enviroment)
@@ -28,6 +28,11 @@ void	path_check(t_shell *shell, t_token *tokens)
 	{
 		if (!access(shell->cmd_list[0], X_OK))
 			shell->exe->cmd = ft_strdup(shell->cmd_list[0]);
+		else
+		{
+			exit_execution(shell, tokens);
+			exit (127);
+		}
 		shell->exe->flag = 1;
 	}
 }
@@ -48,7 +53,10 @@ void	cmd_check(t_shell *shell)
 		shell->exe->j++;
 	}
 	if (shell->paths)
+	{
 		ft_free_2d(shell->paths);
+		shell->paths = NULL;
+	}
 }
 
 static int	count_norm(t_token *tmp, int *i, int count)
