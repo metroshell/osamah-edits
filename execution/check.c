@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:49:57 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 12:29:54 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/25 14:42:55 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,13 @@ void	path_check(t_shell *shell, t_token *tokens)
 	{
 		if (!access(shell->cmd_list[0], X_OK))
 			shell->exe->cmd = ft_strdup(shell->cmd_list[0]);
-		else
+		else if (shell->cmd_list[0][0] == '/')
 		{
-			exit_execution(shell, tokens);
-			exit (127);
+			exit_cmd_not_found(shell, shell->head, NULL);
+		}
+		else if (shell->cmd_list[0][0] == '.')
+		{
+			exit_cmd_not_found(shell, shell->head, NULL);
 		}
 		shell->exe->flag = 1;
 	}

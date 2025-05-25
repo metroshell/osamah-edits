@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 15:53:59 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:00:32 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ typedef struct s_shell
 	int				expand_flag;
 	int				fd_out;
 	int				exit_status;
+	int				heredoc_interrupted;
 	t_env			*env;
 	t_execute		*exe;
 	t_token			*head;

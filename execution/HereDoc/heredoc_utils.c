@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:13:01 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 18:10:36 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 14:48:19 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	handle_heredoc_child(void)
 	sa.sa_handler = heredoc_signal_handler;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa,NULL);
+	sigaction(SIGINT, &sa, NULL);
 }
 
 void	open_file(t_fds *fds, int j)
@@ -45,10 +45,15 @@ int	check_text(char *text, t_shell *shell)
 
 void	heredoc_signal_handler(int sig)
 {
+	// (void)sig;
+	// rl_redisplay();
+	// write(2, "\n", 1);
+	// rl_on_new_line();
+	// if (!access(".temp", F_OK))
+	// 	unlink(".temp");
+	// exit(128 + SIGINT);
 	(void)sig;
-	rl_redisplay();
 	write(2, "\n", 1);
-	rl_on_new_line();
 	if (!access(".temp", F_OK))
 		unlink(".temp");
 	exit(128 + SIGINT);

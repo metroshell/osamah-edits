@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 14:15:24 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:11:36 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,11 @@ void	exec_commands(t_token *tokens, t_shell *shell)
 		child_process(shell, temp);
 		signal(SIGINT, SIG_IGN);
 		temp = temp->next;
-		free(shell->cmd_list);
-		shell->cmd_list = NULL;
+		// if (shell->cmd_list)
+		// {
+		// 	ft_free_2d(shell->cmd_list);
+		// 	shell->cmd_list = NULL;
+		// }
 		shell->exe->index++;
 	}
 	shell->exe->j = 0;

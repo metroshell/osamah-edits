@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:47:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 15:49:23 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:30:29 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	exit_execution(t_shell *shell, t_token *tokens)
 	}
 	if (shell && shell->exe && shell->exe->pipes)
 	{
-		ft_free_int2d(shell->exe->pipes, shell);
+		// ft_free_int2d(shell->exe->pipes, shell);
 		shell->exe->pipes = NULL;
 	}
 	if (shell && shell->exe)

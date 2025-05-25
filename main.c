@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 15:22:24 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 14:29:37 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	start_minishell(t_shell *shell)
 	parser = ft_calloc(1, sizeof(t_parser));
 	if (!parser)
 		exit(EXIT_FAILURE);
-	if (tokens)shell->exit_status = 0;
+	if (tokens)
 	{
 		ft_parser(tokens, parser, shell);
 		if (shell->paths)

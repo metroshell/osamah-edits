@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:40:04 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 17:51:23 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:36:37 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,9 @@ int	create_heredoc_files(t_token *tokens)
 	t_token	*temp;
 	int		i;
 	int		count;
-
+	char	*str;
+	
 	temp = tokens;
-	i = 0;
 	count = 1;
 	while (temp)
 	{
@@ -93,7 +93,9 @@ int	create_heredoc_files(t_token *tokens)
 		{
 			if (temp->type[i] == HEREDOC)
 			{
-				temp->heredoc_file = ft_strjoin(".temp", ft_itoa(count));
+				str = ft_itoa(count);
+				temp->heredoc_file = ft_strjoin(".temp", str);
+				free (str);
 				count++;
 				break ;
 			}

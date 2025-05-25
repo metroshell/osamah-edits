@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:43:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 18:09:38 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 14:42:45 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd)
 		free(temp);
 		write(2, string, ft_strlen(string));
 		free(string);
-		free(fd);
+		if (fd)
+			free(fd);
 		exit_execution(shell, tokens);
 		exit(126);
 	}
@@ -54,7 +55,8 @@ void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd)
 	free(temp);
 	write(2, string, ft_strlen(string));
 	free(string);
-	free(fd);
+	if (fd)
+		free(fd);
 	exit_execution(shell, tokens);
 	exit(127);
 }

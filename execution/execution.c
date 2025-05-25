@@ -6,7 +6,7 @@
 /*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/24 18:07:45 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/25 14:30:05 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void	execute_command(t_token *tokens, t_shell *shell)
 	signal(SIGINT, SIG_IGN);
 	get_exit_status(id, shell);
 	cleanup_execute_command(shell, fd);
+	// fprintf(stderr, "exit status = %i\n", shell->exit_status);
 }
 
 void	execute(t_shell *shell, t_token *tokens)
