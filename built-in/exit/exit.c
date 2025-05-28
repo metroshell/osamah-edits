@@ -3,31 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:34:44 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 14:28:57 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/26 00:47:37 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	exit_zero(t_token *token, t_shell *shell)
+static void	exit_zero(t_shell *shell, t_fds *fd)
 {
 	int	x;
 
-	(void)token;
 	x = shell->exit_status;
-	free_shell(shell);
-	free_tokenizer(shell->head);
+	if (shell && shell->head)
+		free_tokenizer(shell->head);
+	if (shell)
+		free_shell(shell);
+	if (fd)
+	{
+		free(fd);
+		fd = NULL;
+	}
 	exit(x);
 }
 
-void	ft_exit(t_token *token, t_shell *shell)
+static void	clean_up_and_exit(t_shell *shell, t_fds *fd, int status)
+{
+	if (fd)
+	{
+		free(fd);
+		fd = NULL;
+	}
+	if (shell && shell->head)
+		free_tokenizer(shell->head);
+	if (shell)
+		free_shell(shell);
+	exit(status);
+}
+
+void	ft_exit(t_token *token, t_shell *shell, t_fds *fd)
 {
 	char	*tmp;
 	char	*temp;
-	int		status;
 
 	if (token->content[1])
 	{
@@ -38,15 +57,17 @@ void	ft_exit(t_token *token, t_shell *shell)
 			free(tmp);
 			write(2, temp, ft_strlen(temp));
 			free(temp);
-			free_shell(shell);
-			free_tokenizer(shell->head);
-			exit(2);
+			clean_up_and_exit(shell, fd, 2);
 		}
-		status = ft_atoi(token->content[1]);
-		free_shell(shell);
-		free_tokenizer(shell->head);
-		exit(status);
+		if (token->content[2])
+		{
+			write (2, "exit\n", 5);
+			write (2, "ARSSH: exit: too many arguments\n", 33);
+			shell->exit_status = 1;
+			return ;
+		}
+		clean_up_and_exit(shell, fd, ft_atoi(token->content[1]));
 	}
 	else
-		exit_zero(token, shell);
+		exit_zero(shell, fd);
 }

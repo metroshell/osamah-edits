@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/25 14:30:05 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/28 07:24:12 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Headers/minishell.h"
 
-extern int	g_exit_status;
+// extern int	g_exit_status;
 
 void	execute_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd)
 {
@@ -24,7 +24,7 @@ void	execute_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd)
 
 int	execute_built_in(t_shell *shell, t_token *tokens, t_fds *fd)
 {
-	if (ft_executor(shell, tokens))
+	if (ft_executor(shell, tokens, fd))
 	{
 		if (shell->fd_out)
 			close(shell->fd_out);
@@ -41,10 +41,44 @@ int	execute_built_in(t_shell *shell, t_token *tokens, t_fds *fd)
 	return (0);
 }
 
+int	redirect_in(t_token *tokens)
+{
+	t_token	*tmp;
+	int		i;
+
+	i = 0;
+	tmp = tokens;
+	while (tmp->content[i])
+	{
+		if (tmp->type[i] == REDIRECTIN || tmp->type[i] == HEREDOC)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+void	check_last_redirect_in(t_fds *fd, t_token *tokens)
+{
+	t_token	*tmp;
+	int		i;
+
+	i = 0;
+	tmp = tokens;
+	while (tmp->content[i])
+	{
+		if (tmp->type[i] == HEREDOC)
+			fd->flag_heredoc = 1;
+		else if (tmp->type[i] == REDIRECTIN)
+			fd->flag_heredoc = 0;
+		i++;
+	}
+}
+
 void	execute_child(t_shell *shell, t_token *tokens, t_fds *fd)
 {
 	shell->exit_status = 0;
-	// g_exit_status = 0;
+	if (redirect_in(tokens))
+		check_last_redirect_in(fd, tokens);
 	check_files_in_child(fd);
 	get_paths(shell);
 	if (!shell->paths)
@@ -62,7 +96,7 @@ void	execute_child(t_shell *shell, t_token *tokens, t_fds *fd)
 	else
 	{
 		exit_execution(shell, tokens);
-		free(fd);
+		restore_in_out(fd);
 		exit(0);
 	}
 	signal(SIGQUIT, SIG_DFL);
@@ -91,7 +125,6 @@ void	execute_command(t_token *tokens, t_shell *shell)
 	signal(SIGINT, SIG_IGN);
 	get_exit_status(id, shell);
 	cleanup_execute_command(shell, fd);
-	// fprintf(stderr, "exit status = %i\n", shell->exit_status);
 }
 
 void	execute(t_shell *shell, t_token *tokens)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 16:06:40 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 00:48:18 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/26 22:41:51 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,15 @@ void	ft_expander(t_shell *shell, t_token *token)
 		return ;
 	if (!token)
 		return ;
+	expand->status_flag = 0;
 	while (token)
 	{
 		expand->out = 0;
 		process_token(shell, token, expand);
 		token = token->next;
 	}
+	if (expand->status_flag)
+		shell->exit_status = 0;
 	if (expand->variable)
 		free(expand->variable);
 	free(expand);

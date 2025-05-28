@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_dollar.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:27:50 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 14:30:14 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/26 22:40:37 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,8 @@ void	handle_dollar(t_shell *shell, t_token *token, t_expand *expand,
 	else if (token->content[expand->out][expand->in] == '?')
 	{
 		count = 0;
-		// fprintf(stderr, "ecit in expander = %i\n", shell->exit_status);
 		tmp = ft_itoa(shell->exit_status);
-		shell->exit_status = 0;
-		// fprintf(stderr, "exit = %s\n", tmp);
+		expand->status_flag = 1;
 		expand->in++;
 		while (tmp[count])
 			temp[expand->dex++] = tmp[count++];

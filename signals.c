@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 08:32:18 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/14 23:02:14 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/28 07:24:03 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		g_exit_status;
+int		g_signal;
 
 void	sig(int signum)
 {
@@ -21,7 +21,7 @@ void	sig(int signum)
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
 	rl_redisplay();
-	g_exit_status = 128 + SIGINT;
+	g_signal = 128 + SIGINT;
 }
 
 void	signal_handler(void)

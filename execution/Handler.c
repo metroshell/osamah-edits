@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 15:11:36 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/28 07:24:17 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int	g_exit_status;
+// extern int	g_exit_status;
 
 void	normal_execute(t_shell *shell, t_token *tokens)
 {
@@ -64,7 +64,7 @@ void	exec_init(t_token *tokens, t_shell *shell)
 
 void	exec_commands(t_token *tokens, t_shell *shell)
 {
-	t_token *temp;
+	t_token	*temp;
 
 	temp = tokens;
 	while (temp)
@@ -103,6 +103,11 @@ void	execute_multiple(t_token *tokens, t_shell *shell)
 		return ;
 	create_heredoc_files(tokens);
 	heredoc_handle(tokens, shell);
+	if (shell->heredoc_interrupted)
+	{
+		// exit_execute(shell, tokens);
+		return ;
+	}
 	exec_commands(tokens, shell);
 	last_pid = shell->exe->pids[shell->exe->pipes_count];
 	while (++shell->exe->index < shell->exe->pipes_count + 1)
@@ -117,9 +122,18 @@ void	execute_multiple(t_token *tokens, t_shell *shell)
 		}
 	}
 	if (shell && shell->exe && shell->exe->pipes)
+	{
 		ft_free_int2d(shell->exe->pipes, shell);
+		shell->exe->pipes = NULL;
+	}
 	if (shell && shell->exe && shell->exe->pids)
+	{
 		free(shell->exe->pids);
+		shell->exe->pids = NULL;
+	}
 	if (shell && shell->exe)
+	{
 		free (shell->exe);
+		shell->exe = NULL;
+	}
 }

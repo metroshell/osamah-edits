@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:39:22 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:41:49 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/27 06:59:48 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ int	open_appendfiles(t_fds *fd, char **lst, int *i, int *j)
 	close(fd->fd_out[(*j)]);
 	fd->flag_append = 1;
 	(*i)++;
-	if (lst[(*i)] && !ft_strcmp(lst[(*i)], ">>"))
+	if (lst[(*i)] && (!ft_strcmp(lst[(*i)], ">>")
+		|| !ft_strcmp(lst[(*i)], ">")))
 	{
 		free(fd->out_file);
 		fd->out_file = NULL;

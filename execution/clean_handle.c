@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:43:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 14:42:45 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/28 06:06:00 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	check_files_in_child(t_fds *fd)
 	int	fds;
 
 	fds = 0;
-	if (fd->flag_heredoc && access(".temp", F_OK))
+	if (fd->flag_heredoc && access(fd->temp, F_OK))
 		exit(130);
 	if (fd->flag_heredoc)
 	{
@@ -102,9 +102,13 @@ void	check_files_in_child(t_fds *fd)
 		unlink(fd->temp);
 		dup2(fds, STDIN_FILENO);
 		close(fds);
-		free(fd->temp);
 	}
-	if (fd->flag_out && fd->flag_append)
+	else if (fd->temp)
+	{
+		unlink(fd->temp);
+		free (fd->temp);
+	}
+	if (fd->flag_out || fd->flag_append)
 	{
 		close(fd->fd_out[0]);
 		close(fd->saved_out);

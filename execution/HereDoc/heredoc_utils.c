@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:13:01 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 14:48:19 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:08:24 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	handle_heredoc_child(void)
+void	handle_heredoc_child()
 {
 	struct sigaction	sa;
 
@@ -55,6 +55,9 @@ void	heredoc_signal_handler(int sig)
 	(void)sig;
 	write(2, "\n", 1);
 	if (!access(".temp", F_OK))
+	{
 		unlink(".temp");
+		// close(3);
+	}
 	exit(128 + SIGINT);
 }

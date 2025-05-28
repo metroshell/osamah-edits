@@ -6,28 +6,11 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 02:10:24 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 12:25:42 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/28 06:35:53 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	free_str_array(char **arr)
-{
-	int	i;
-
-	i = 0;
-	if (arr)
-	{
-		while (arr[i])
-		{
-			if (arr[i])
-				free(arr[i]);
-			i++;
-		}
-		free(arr);
-	}
-}
 
 void	free_env(t_env *env)
 {
@@ -59,7 +42,8 @@ void	free_tokenizer(t_token *tokens)
 			free(tokens->type);
 		if (tokens->heredoc_file)
 		{
-			unlink(tokens->heredoc_file);
+			// if (!access(tokens->heredoc_file, F_OK))
+			// 	unlink(tokens->heredoc_file);
 			free(tokens->heredoc_file);
 		}
 		free(tokens);
@@ -68,23 +52,52 @@ void	free_tokenizer(t_token *tokens)
 	free(tokens);
 }
 
+void	close_pipes(int **pipe, t_shell *shell)
+{
+	int	i;
+
+	i = 0;
+	if (!pipe)
+		return ;
+	while (i < shell->exe->pipes_count)
+	{
+		if (pipe[i][0] && pipe[i][0] > 0)
+			close(pipe[i][0]);
+		if (pipe[i][1] && pipe[i][1] > 0)
+			close(pipe[i][1]);
+		i++;
+	}
+}
+
 void	free_shell(t_shell *shell)
 {
 	if (!shell)
 		return ;
+	if (shell->head)
+		free_tokenizer(shell->head);
 	if (shell->cmd_list)
-		free_str_array(shell->cmd_list);
+		ft_free_2d(shell->cmd_list);
 	if (shell->paths)
-		free_str_array(shell->paths);
+		ft_free_2d(shell->paths);
 	if (shell->prompt)
 		free(shell->prompt);
 	if (shell->enviroment)
-		free_str_array(shell->enviroment);
+		ft_free_2d(shell->enviroment);
 	if (shell->variable)
 		free(shell->variable);
 	if (shell->env)
 		free_env(shell->env);
-	free(shell);
+	if (shell->exe && shell->exe->pids)
+		free(shell->exe->pids);
+	if (shell->exe && shell->exe->pipes)
+	{
+		close_pipes(shell->exe->pipes, shell);
+		ft_free_int2d(shell->exe->pipes, shell);
+	}
+	if (shell->exe)
+		free(shell->exe);
+	if (shell)
+		free(shell);
 }
 
 int	valid_arg(char *status)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:46:19 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:46:32 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/27 07:01:17 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	copy_command_line_2(int *i, t_token *temp, char **list, int *j)
 	{
 		list[*j] = ft_strdup(temp->content[*i]);
 		if (!list[*j])
-			printf("hello\n");
+			return ;
 		(*j)++;
 		(*i)++;
 	}

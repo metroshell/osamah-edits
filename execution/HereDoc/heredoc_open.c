@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_open.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:40:04 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 15:36:37 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:13:53 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int	count_heredoc(t_token *tokens)
 			counter++;
 		i++;
 	}
-	fprintf(stderr, "%d\n", counter);
 	return (counter);
 }
 
@@ -61,7 +60,10 @@ int	open_heredocs(t_shell *shell, char *exit_heredoc, char *file)
 	{
 		text = readline("> ");
 		if (!text)
+		{
+			close (fd);
 			heredoc_ctrl_d(text, exit_heredoc, shell, NULL);
+		}
 		if (shell->expand_flag)
 			text = expand_heredoc(text, shell);
 		if (text && exit_heredoc && !ft_strcmp(text, exit_heredoc))

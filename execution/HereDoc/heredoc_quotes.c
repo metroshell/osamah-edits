@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_quotes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:49:11 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 18:18:29 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/28 06:17:42 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,9 @@ char	*remove_qoutes(char *string, t_shell *shell)
 	char			*temp;
 	t_quote_state	st;
 
-	temp = malloc(ft_strlen(string) - qoutes_counter(string) + 1);
+	temp = malloc(ft_strlen(string) - qoutes_counter(string) + 2);
 	if (!temp)
-		exit(123);
+		return (NULL);
 	st.index = 0;
 	st.i = 0;
 	st.count = 0;

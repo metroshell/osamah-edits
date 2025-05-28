@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 14:29:37 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/26 12:32:34 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_executor_norm(t_shell *shell, t_token *token)
+int	ft_executor_norm(t_shell *shell, t_token *token, t_fds *fd)
 {
 	if (ft_strcmp(token->content[0], "unset") == 0)
 	{
@@ -31,13 +31,13 @@ int	ft_executor_norm(t_shell *shell, t_token *token)
 	}
 	else if (ft_strcmp(token->content[0], "exit") == 0)
 	{
-		ft_exit(token, shell);
+		ft_exit(token, shell, fd);
 		return (1);
 	}
 	return (0);
 }
 
-int	ft_executor(t_shell *shell, t_token *token)
+int	ft_executor(t_shell *shell, t_token *token, t_fds *fd)
 {
 	if (token->content[0])
 	{
@@ -57,7 +57,7 @@ int	ft_executor(t_shell *shell, t_token *token)
 			return (1);
 		}
 		else
-			return (ft_executor_norm(shell, token));
+			return (ft_executor_norm(shell, token, fd));
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 17:38:09 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 12:32:03 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/27 07:01:37 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,7 @@ void	restore_in_out(t_fds *fd)
 	if (fd->temp)
 	{
 		if (fd->fd_in[0] != 0)
-		{
 			close (fd->fd_in[0]);
-		}
 		free(fd->temp);
 	}
 	if (fd)

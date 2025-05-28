@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:49:07 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/24 11:05:33 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/28 05:41:03 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ void	child_process_3(t_token *tokens, t_shell *shell, int flag)
 			handle_append(shell, tokens, x);
 		else if (tokens->type[x] == REDIRECTIN)
 			handle_redirectin(shell, tokens, x);
+		// else if (tokens->type[x] == HEREDOC)
+		// {
+		// 	if (tokens->heredoc_file)
+		// 		unlink(tokens->heredoc_file);
+		// }
 		x++;
 	}
 }
@@ -102,7 +107,7 @@ void	child_process(t_shell *shell, t_token *tokens)
 	{
 		child_process_2(tokens, shell);
 		child_process_4(tokens, shell);
-		if (ft_executor(shell, tokens))
+		if (ft_executor(shell, tokens, NULL))
 			exit(0);
 		else
 			normal_execute(shell, tokens);

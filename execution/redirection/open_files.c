@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   open_files.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:39:59 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/23 19:41:43 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/27 07:01:31 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	open_redirect_out(t_fds *fd, char **lst)
 	int	j;
 
 	fd->saved_out = dup(STDOUT_FILENO);
+	fd->flag_append = 0;
 	fd->flag_out = 0;
 	i = 0;
 	j = 0;
@@ -79,7 +80,8 @@ int	open_outfiles(t_fds *fd, char **lst, int *i, int *j)
 	close(fd->fd_out[(*j)]);
 	fd->flag_out = 1;
 	(*i)++;
-	if (lst[(*i)] && !ft_strcmp(lst[(*i)], ">"))
+	if (lst[(*i)]&& (!ft_strcmp(lst[(*i)], ">")
+		|| !ft_strcmp(lst[(*i)], ">>")))
 	{
 		free(fd->out_file);
 		fd->out_file = NULL;

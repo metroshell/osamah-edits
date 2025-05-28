@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/25 15:00:32 by qhatahet         ###   ########.fr       */
+/*   Updated: 2025/05/28 10:56:24 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
-extern int			g_exit_status;
+extern int			g_signal;
 
 typedef struct s_env
 {
@@ -52,7 +52,6 @@ typedef struct s_fds
 	int				flag_heredoc;
 	char			*out_file;
 	char			*in_file;
-	char			**list;
 	char			*temp;
 	char			*delimiter;
 	int				index_i;
@@ -73,7 +72,6 @@ typedef enum s_type
 	REDIRECTIN,
 	ENDOFFILE
 }					t_type;
-
 
 typedef struct s_execute
 {
@@ -105,7 +103,6 @@ typedef struct s_parser
 	int				command_flag;
 	int				eof_flag;
 }					t_parser;
-
 
 typedef struct s_token
 {
@@ -140,9 +137,9 @@ typedef struct s_shell
 	t_token			*head;
 }					t_shell;
 
-
 typedef struct s_expand
 {
+	int				status_flag;
 	int				out;
 	int				in;
 	int				flag;
@@ -230,7 +227,7 @@ void				ft_cd(t_shell *shell, t_token *token);
 
 // signal and exit status
 void				signal_handler(void);
-void				ft_exit(t_token *token, t_shell *shell);
+void				ft_exit(t_token *token, t_shell *shell, t_fds *fd);
 
 // exit
 void				free_env(t_env *env);
@@ -244,7 +241,7 @@ void				add_backslash(t_shell *shell);
 void				get_paths(t_shell *shell);
 void				free_tokenizer(t_token *tokens);
 void				free_env(t_env *env);
-int					ft_executor(t_shell *shell, t_token *token);
+int					ft_executor(t_shell *shell, t_token *token, t_fds *fd);
 void				open_heredoc(t_shell *shell, char **lst, t_fds *fds);
 void				skip_spaces(t_shell *shell);
 void				exit_execution(t_shell *shell, t_token *tokens);
@@ -260,10 +257,12 @@ void				rearrange_list(t_token *tokens, t_shell *shell);
 int					redirect_first_arg(t_token *tokens);
 int					is_there_heredoc(t_token *tokens);
 int					create_heredoc_files(t_token *tokens);
-void				execute_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd);
+void				execute_cmd_with_path(t_shell *shell, t_token *tokens,
+						t_fds *fd);
 void				link_cmd_with_path(t_shell *shell, t_token *tokens,
 						t_fds *fd);
-void				exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd);
+void				exit_cmd_not_found(t_shell *shell, t_token *tokens,
+						t_fds *fd);
 void				cleanup_execute_command(t_shell *shell, t_fds *fd);
 void				get_exit_status(int id, t_shell *shell);
 void				check_files_in_child(t_fds *fd);
@@ -304,7 +303,7 @@ int					open_outfiles(t_fds *fd, char **lst, int *i, int *j);
 int					open_infiles(t_fds *fd, char **lst, int *i, int *j);
 char				**open_files(char **lst, t_token *tokens, t_fds *fd,
 						t_shell *shell);
-void				ft_free_int2d(int **x, t_shell *shell);
+void				ft_free_int2d(int **arr, t_shell *shell);
 
 // heredoc
 void				heredoc_handle(t_token *tokens, t_shell *shell);
@@ -316,10 +315,13 @@ char				*remove_qoutes(char *string, t_shell *shell);
 char				*expand_heredoc(char *text, t_shell *shell);
 void				dollar(char *text, t_shell *shell, char *temp, int *i);
 int					length(char *text, t_shell *shell);
-void				heredoc_ctrl_d(char *text, char *exit_heredoc, t_shell *shell, t_fds *fd);
+void				heredoc_ctrl_d(char *text, char *exit_heredoc,
+						t_shell *shell, t_fds *fd);
 void				handle_heredoc_child(void);
 void				open_file(t_fds *fds, int j);
 void				heredoc_signal_handler(int sig);
 void				free_heredoc(t_shell *shell, t_fds *fd);
+void				heredoc_parent(pid_t pid, t_shell *shell,
+						struct sigaction original_sa);
 
 #endif
