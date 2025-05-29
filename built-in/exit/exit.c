@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 14:34:44 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/26 00:47:37 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 14:13:00 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,10 @@ static void	exit_zero(t_shell *shell, t_fds *fd)
 	if (shell && shell->head)
 		free_tokenizer(shell->head);
 	if (shell)
+	{
 		free_shell(shell);
+		free(shell);
+	}
 	if (fd)
 	{
 		free(fd);
@@ -39,7 +42,10 @@ static void	clean_up_and_exit(t_shell *shell, t_fds *fd, int status)
 	if (shell && shell->head)
 		free_tokenizer(shell->head);
 	if (shell)
+	{
 		free_shell(shell);
+		free(shell);
+	}
 	exit(status);
 }
 

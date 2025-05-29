@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 17:25:24 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/26 22:18:54 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 14:13:38 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	handle_redirectin(t_shell *shell, t_token *tokens, int x)
 		shell->exit_status = 1;
 		free_tokenizer(shell->head);
 		free_shell(shell);
+		free(shell);
 		exit(EXIT_FAILURE);
 	}
 	if (shell->exe->count_rin == 1 && !is_there_redirectout(tokens)

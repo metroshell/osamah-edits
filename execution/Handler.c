@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:23:53 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/28 07:24:17 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 14:17:38 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,24 +89,25 @@ void	exec_commands(t_token *tokens, t_shell *shell)
 	shell->exe->index = -1;
 }
 
-void	execute_multiple(t_token *tokens, t_shell *shell)
+int	execute_multiple(t_token *tokens, t_shell *shell)
 {
 	int		status;
 	pid_t	last_pid;
 
 	shell->exe = ft_calloc(1, sizeof(t_execute));
 	if (!shell->exe)
-		return ;
+		return (-1);
 	exec_init(tokens, shell);
 	shell->exe->pids = malloc(sizeof(int) * (shell->exe->pipes_count + 2));
 	if (!shell->exe->pids)
-		return ;
+		return (-1);
 	create_heredoc_files(tokens);
 	heredoc_handle(tokens, shell);
 	if (shell->heredoc_interrupted)
 	{
+		// free_shell(shell);
 		// exit_execute(shell, tokens);
-		return ;
+		return (-1);
 	}
 	exec_commands(tokens, shell);
 	last_pid = shell->exe->pids[shell->exe->pipes_count];
@@ -136,4 +137,5 @@ void	execute_multiple(t_token *tokens, t_shell *shell)
 		free (shell->exe);
 		shell->exe = NULL;
 	}
+	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 02:10:24 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/29 10:20:11 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 14:07:58 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,11 @@ void	free_shell(t_shell *shell)
 	}
 	if (shell->exe)
 		free(shell->exe);
-	if (shell)
-		free(shell);
+	// if (shell)
+	// {
+	// 	free(shell);
+	// 	shell = NULL;
+	// }
 }
 
 int	valid_arg(char *status)

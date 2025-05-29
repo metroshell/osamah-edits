@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_list.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:30:22 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/29 10:30:26 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 17:19:05 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,5 @@ char	**create_list(t_token *tokens, t_fds *fd, t_shell *shell)
 		}
 		return (redirect_lst);
 	}
-	else
-		return (shell->cmd_list);
+	return (shell->cmd_list);
 }

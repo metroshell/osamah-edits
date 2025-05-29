@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_multiple.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:28:42 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/29 12:18:43 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 14:11:03 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static void	child(struct sigaction sa, int i, t_shell *shell, t_token *temp)
 	// if (temp->heredoc_file)
 	// 	free(temp->heredoc_file);
 	free_shell(shell);
+	free(shell);
 	if (exit_heredoc)
 		free(exit_heredoc);
 	exit(0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/29 10:33:12 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 17:28:32 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	execute_built_in(t_shell *shell, t_token *tokens, t_fds *fd)
 			close(fd->saved_out);
 		}
 		ft_free_2d(shell->cmd_list);
+		shell->cmd_list = NULL;
 		if (fd)
 			free(fd);
 		return (1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 20:41:23 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/26 12:32:34 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 18:44:20 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void	init_minishell(t_shell *shell)
 {
 	while (1)
 	{
+		shell->heredoc_interrupted = 0;
 		shell->prompt = readline("\033[93mArab Spring 🐣🐥 -> \033[0m");
 		if (!shell->prompt)
 			ctrl_d(shell);

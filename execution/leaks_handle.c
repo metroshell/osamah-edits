@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   leaks_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:47:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/26 12:09:23 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 17:28:56 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,10 @@ void	exit_execute(t_shell *shell, t_token *tokens)
 	if (shell->env)
 		free_env(shell->env);
 	if (shell->cmd_list)
+	{
 		ft_free_2d(shell->cmd_list);
+		shell->cmd_list = NULL;
+	}
 	if (shell)
 		free(shell);
 }

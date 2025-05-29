@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 18:30:31 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/17 02:02:33 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:46:31 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	export_command(t_shell *shell, t_token *token)
 			if (ft_isdigit(token->content[i][export->index]))
 			{
 				i++;
+				shell->exit_status = 1;
 				if (!token->content[i])
 					break ;
 			}

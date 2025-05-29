@@ -3,22 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 11:05:04 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/29 10:27:23 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 17:11:05 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-#define BUFFERSIZE 4096
 
 void	free_heredoc(t_shell *shell, t_fds *fd)
 {
 	// if (shell && shell->head)
 	// 	free_tokenizer(shell->head);
 	free_shell(shell);
+	free(shell);
 	if (fd && fd->temp)
 		free(fd->temp);
 	if (fd)
@@ -27,40 +26,37 @@ void	free_heredoc(t_shell *shell, t_fds *fd)
 
 static void	child(t_fds *fds, t_shell *shell, char *delimiter, int j)
 {
-	signal(SIGINT, heredoc_signal_handler);  // Custom handler to catch Ctrl+C
-	signal(SIGQUIT, SIG_IGN); 
+	int fd = dup(STDIN_FILENO);
+	signal(SIGINT, heredoc_signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 	if (delimiter && (delimiter[0] == '\'' || delimiter[0] == '\"'))
 		delimiter = remove_qoutes(delimiter, shell);
 	while (1)
 	{
+		fds->text = readline("> ");
 		if (g_signal == SIGINT)
 		{
-			printf("GO FUCK YOURSELF\n");
 			close (fds->fd_in[0]);
 			free(delimiter);
 			free_heredoc(shell, fds);
 			g_signal = 0;
+			dup2(fd, STDIN_FILENO);
+			close(fd);
 			exit(128 + SIGINT);
 		}
-		fds->text = readline("> ");
 		if (!fds->text)
 		{
 			if (g_signal == SIGINT)
-        	{
-        	    close(fds->fd_in[0]);
-        	    g_signal = 0;
-        	    exit(128 + SIGINT);
-        	}
+			{
+				close(fds->fd_in[0]);
+				g_signal = 0;
+				dup2(fd, STDIN_FILENO);
+				close(fd);
+				exit(128 + SIGINT);
+			}
 			close(fds->fd_in[j]);
 			heredoc_ctrl_d(fds->text, delimiter, shell, fds);
 		}
-		// if (g_signal == SIGINT)
-		// {
-		// 	printf("GO FUCK YOURSELF\n");
-		// 	close (fds->fd_in[0]);
-		// 	g_signal = 0;
-		// 	exit(128 + SIGINT);
-		// }
 		if (!shell->expand_flag)
 			fds->text = expand_heredoc(fds->text, shell);
 		if (!ft_strcmp(fds->text, delimiter))
@@ -90,6 +86,7 @@ void	heredoc_parent(pid_t pid, t_shell *shell, struct sigaction original_sa)
 	sigaction(SIGINT, &sa_ignore, NULL);
 	waitpid(pid, &status, 0);
 	// Restore original signal handling
+	// (void)original_sa;
 	sigaction(SIGINT, &original_sa, NULL);
 
 	if (WIFEXITED(status))
@@ -137,8 +134,7 @@ static void	handle_heredoc_loop(t_shell *shell, char **lst, t_fds *fds,
 					close(fds->fd_in[0]);
 				if (fds->temp)
 					unlink(fds->temp);
-				// free_heredoc(shell, fds);
-				break;
+				break ;
 			}
 			fds->index_j++;
 		}

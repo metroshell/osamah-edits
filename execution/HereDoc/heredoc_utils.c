@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:13:01 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/29 00:09:12 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 14:52:01 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	heredoc_signal_handler(int sig)
 	{
 		write(2, "\n", 1);
 		g_signal = SIGINT;
+		close(0);
 	}
 	if (!access(".temp", F_OK))
 	{

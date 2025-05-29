@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_handle.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:43:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/29 11:55:35 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 18:59:05 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	check_heredoc_interrupted(t_fds *fd, t_shell *shell)
 void	check_files_in_child(t_fds *fd, t_shell *shell)
 {
 	check_heredoc_interrupted(fd, shell);
+	(void)shell;
 	if (fd->flag_heredoc)
 	{
 		fd->fd_in[0] = open(fd->temp, O_RDONLY);

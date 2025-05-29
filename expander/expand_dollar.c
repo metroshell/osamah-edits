@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_dollar.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oalananz <oalananz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 01:41:38 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/20 19:12:29 by oalananz         ###   ########.fr       */
+/*   Updated: 2025/05/29 17:02:02 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	expand_dollar(t_shell *shell, t_token *token, t_expand *expand)
 		return ;
 	temp = malloc(x + 1);
 	if (!temp)
-		exit(130);
+		exit(0);
 	expand->variable = NULL;
 	while (token->content[expand->out][expand->in])
 	{
@@ -81,4 +81,5 @@ void	expand_dollar(t_shell *shell, t_token *token, t_expand *expand)
 	temp[expand->dex] = '\0';
 	free(token->content[expand->out]);
 	token->content[expand->out] = temp;
+	// free(temp);
 }

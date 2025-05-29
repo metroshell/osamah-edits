@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qhatahet <qhatahet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/29 10:33:45 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 15:43:52 by qhatahet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ int					ft_executor(t_shell *shell, t_token *token, t_fds *fd);
 void				open_heredoc(t_shell *shell, char **lst, t_fds *fds);
 void				skip_spaces(t_shell *shell);
 void				exit_execution(t_shell *shell, t_token *tokens);
-void				execute_multiple(t_token *tokens, t_shell *shell);
+int					execute_multiple(t_token *tokens, t_shell *shell);
 char				**get_env(t_env *env);
 char				**create_list(t_token *tokens, t_fds *fd, t_shell *shell);
 int					how_many_pipes(t_token *tokens);
