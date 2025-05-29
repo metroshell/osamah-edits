@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 02:10:24 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/28 06:35:53 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 10:20:11 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	free_tokenizer(t_token *tokens)
 		tokens = temp;
 	}
 	free(tokens);
+	tokens = NULL;
 }
 
 void	close_pipes(int **pipe, t_shell *shell)

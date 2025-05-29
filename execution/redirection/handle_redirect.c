@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:39:22 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/27 06:59:48 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 10:28:46 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ int	redirect(char **lst, t_shell *shell, t_fds *fd)
 		if (!ft_strcmp(lst[i++], "<<"))
 		{
 			open_heredoc(shell, lst, fd);
+			printf("hello there\n");
 			break ;
 		}
 	}

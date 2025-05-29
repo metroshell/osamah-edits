@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:28:42 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/28 06:36:44 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 12:18:43 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static void	child(struct sigaction sa, int i, t_shell *shell, t_token *temp)
 	int		fd;
 	char	*exit_heredoc;
 
-	// signal(SIGINT, heredoc_signal_handler);
-	// signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, heredoc_signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 	fd = 0;
 	sa.sa_handler = heredoc_signal_handler;
 	sa.sa_flags = 0;
@@ -71,6 +71,8 @@ static void	process(t_token *temp, struct sigaction original_sa,
 				child(sa, i, shell, temp);
 			else if (pid > 0)
 				heredoc_parent(pid, shell, original_sa);
+			if (shell->heredoc_interrupted)
+				break ;
 		}
 		i++;
 	}

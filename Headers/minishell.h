@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 14:24:34 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/28 10:56:24 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 10:33:45 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ void				exit_cmd_not_found(t_shell *shell, t_token *tokens,
 						t_fds *fd);
 void				cleanup_execute_command(t_shell *shell, t_fds *fd);
 void				get_exit_status(int id, t_shell *shell);
-void				check_files_in_child(t_fds *fd);
+void				check_files_in_child(t_fds *fd, t_shell *shell);
 char				**get_env(t_env *env);
 int					count_content(t_token *tokens);
 int					how_many_pipes(t_token *tokens);

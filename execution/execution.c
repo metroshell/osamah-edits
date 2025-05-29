@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:22:32 by qhatahet          #+#    #+#             */
-/*   Updated: 2025/05/28 07:24:12 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 10:33:12 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	execute_child(t_shell *shell, t_token *tokens, t_fds *fd)
 	shell->exit_status = 0;
 	if (redirect_in(tokens))
 		check_last_redirect_in(fd, tokens);
-	check_files_in_child(fd);
+	check_files_in_child(fd, shell);
 	get_paths(shell);
 	if (!shell->paths)
 	{

@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:43:32 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/28 06:06:00 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 11:55:35 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,12 @@ void	link_cmd_with_path(t_shell *shell, t_token *tokens, t_fds *fd)
 	}
 	if (!shell->cmd)
 		exit_cmd_not_found(shell, tokens, fd);
-	free(fd);
+	if (!ft_strcmp(shell->cmd_list[0], ""))
+	{
+		if (shell->cmd)
+			free (shell->cmd);
+		exit_cmd_not_found(shell, tokens, fd);
+	}
 }
 
 void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd)
@@ -63,7 +68,8 @@ void	exit_cmd_not_found(t_shell *shell, t_token *tokens, t_fds *fd)
 
 void	cleanup_execute_command(t_shell *shell, t_fds *fd)
 {
-	restore_in_out(fd);
+	if (fd)
+		restore_in_out(fd);
 	if (shell->cmd_list)
 	{
 		ft_free_2d(shell->cmd_list);
@@ -80,6 +86,7 @@ void	get_exit_status(int id, t_shell *shell)
 {
 	int	status;
 
+	status = 0;
 	waitpid(id, &status, 0);
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
@@ -87,21 +94,31 @@ void	get_exit_status(int id, t_shell *shell)
 		shell->exit_status = 128 + WTERMSIG(status);
 }
 
-void	check_files_in_child(t_fds *fd)
+void	check_heredoc_interrupted(t_fds *fd, t_shell *shell)
 {
-	int	fds;
-
-	fds = 0;
-	if (fd->flag_heredoc && access(fd->temp, F_OK))
+	if (shell && shell->heredoc_interrupted)
+	{
+		if (fd && fd->delimiter)
+			free(fd->delimiter);
+		if (fd->temp)
+			free(fd->temp);
+		free (fd);
+		exit_execution(shell, shell->head);
 		exit(130);
+	}
+}
+
+void	check_files_in_child(t_fds *fd, t_shell *shell)
+{
+	check_heredoc_interrupted(fd, shell);
 	if (fd->flag_heredoc)
 	{
-		fds = open(fd->temp, O_RDONLY);
+		fd->fd_in[0] = open(fd->temp, O_RDONLY);
 		fd->flag_in = 1;
 		fd->saved_in = dup(STDIN_FILENO);
 		unlink(fd->temp);
-		dup2(fds, STDIN_FILENO);
-		close(fds);
+		dup2(fd->fd_in[0], STDIN_FILENO);
+		close(fd->fd_in[0]);
 	}
 	else if (fd->temp)
 	{

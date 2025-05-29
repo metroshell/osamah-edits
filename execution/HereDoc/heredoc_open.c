@@ -6,7 +6,7 @@
 /*   By: qais <qais@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:40:04 by oalananz          #+#    #+#             */
-/*   Updated: 2025/05/28 11:13:53 by qais             ###   ########.fr       */
+/*   Updated: 2025/05/29 12:16:53 by qais             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,15 @@ int	open_heredocs(t_shell *shell, char *exit_heredoc, char *file)
 	fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	while (1)
 	{
+		if (g_signal == SIGINT)
+		{
+			printf("GO FUCK YOURSELF\n");
+			close (fd);
+			free(exit_heredoc);
+			free_shell(shell);
+			g_signal = 0;
+			exit(128 + SIGINT);
+		}
 		text = readline("> ");
 		if (!text)
 		{
